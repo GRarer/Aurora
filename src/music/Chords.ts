@@ -11,9 +11,7 @@ export enum ChordQualities {
     DOM7 = "dom7",
     M7B5 = "m7b5",
     DIM7 = "dim7",
-    DOM7SUS4 = "dom7sus4",
-    MAJOR6 = "major6",
-    MINOR6 = "minor6"
+    DOM7SUS4 = "dom7sus4"
 }
 
 //Chord intervals are in ascending order of semitones away from the root.
@@ -31,9 +29,7 @@ export const ChordIntervals: Record<ChordQualities, number[]> = {
     "dom7": [0, 4, 7, 10],
     "m7b5": [0, 3, 6, 10],
     "dim7": [0, 3, 6, 9],
-    "dom7sus4": [0, 5, 7, 9],
-    "major6": [0, 4, 7, 9],
-    "minor6": [0, 3, 7, 8]
+    "dom7sus4": [0, 5, 7, 9]
 }
 
 export class Chord {
