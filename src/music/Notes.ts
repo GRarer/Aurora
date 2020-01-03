@@ -8,6 +8,9 @@ export class Notes {
     }
 
     static midiNumberToNoteName(note: number): string {
+        while (note < 0) {
+            note += 12;
+        }
         return this.noteNames[note % 12];
     }
 
