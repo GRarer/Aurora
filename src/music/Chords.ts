@@ -1,4 +1,5 @@
 import { Notes } from './Notes.js';
+import { Random } from '../util/Random.js';
 
 export enum ChordQualities {
     MAJOR = "major",
@@ -52,6 +53,29 @@ export class Chord {
 
     toString(): string {
         return `${Notes.midiNumberToNoteName(this.root)} ${this.quality}`;
+    }
+
+}
+
+export class ChordMotion {
+
+    sourceChords: ChordQualities[];
+    distances: number[];
+    destinationChords: ChordQualities[];
+
+    constructor(sources: ChordQualities[], distances: number[], dests: ChordQualities[]) {
+        this.sourceChords = sources;
+        this.distances = distances;
+        this.destinationChords = dests;
+    };
+
+    canStartOn(chord: Chord): boolean {
+        return this.sourceChords.indexOf(chord.quality) !== -1;
+    }
+
+    nextFrom(chord: Chord): Chord {
+        return new Chord(chord.root + Random.fromArray(this.distances),
+            Random.fromArray(this.destinationChords));
     }
 
 }
