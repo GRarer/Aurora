@@ -37,7 +37,7 @@ export default class MusicManager {
         const beatLength: number = 60 / this.beatsPerMinute;
         let offsetTime: number = 0;
         for (let i = 0; i < progression.length; i++) {
-            const notes: number[] = progression[i].notes;
+            const notes: number[] = this.constrainNotes(progression[i].notes, 60, 72).sort((a: number, b: number) => a - b);
             for (let j = 0; j < 4; j++) {
                 for (let k = 0; k < notes.length; k++) {
                     this.scheduleNote(notes[k], startingTime + offsetTime);
@@ -48,6 +48,19 @@ export default class MusicManager {
         window.setTimeout(() => {
             this.queueNextMeasures(startingTime + offsetTime, progression[progression.length - 1]);
         }, (startingTime + offsetTime - this.context.currentTime - 0.2) * 1000);
+    }
+
+    //shift notes through octaves so they end up between min and max inclusive
+    private static constrainNotes(notes: number[], min: number, max: number): number[] {
+        return notes.map(note => {
+            while (note < min) {
+                note += 12;
+            }
+            while (note > max) {
+                note -= 12;
+            }
+            return note;
+        });
     }
 
     private static scheduleNote(note: number, start: number): void {
