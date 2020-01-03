@@ -19,6 +19,7 @@ export default class MusicManager {
             new Chord(60, ChordQualities.MINOR7),
             new Chord(58, ChordQualities.DOM7)
         ];
+        console.log(`chords: ${progression.map(chord => chord.toString()).join(', ')}`);
         const beatLength: number = 60 / this.beatsPerMinute;
         let offsetTime: number = 0;
         for (let i = 0; i < progression.length; i++) {

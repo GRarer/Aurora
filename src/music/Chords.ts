@@ -1,3 +1,5 @@
+import { Notes } from './Notes.js';
+
 export enum ChordQualities {
     MAJOR = "major",
     MINOR = "minor",
@@ -46,6 +48,10 @@ export class Chord {
 
     get notes(): number[] {
         return this.intervals.map(interval => interval + this.root);
+    }
+
+    toString(): string {
+        return `${Notes.midiNumberToNoteName(this.root)} ${this.quality}`;
     }
 
 }
