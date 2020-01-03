@@ -4,7 +4,7 @@ import { Arrays } from '../util/Arrays.js';
 
 export default class MusicManager {
 
-    static beatsPerMinute: number = 120;
+    static beatsPerMinute: number = 220;
     static context: AudioContext;
 
     static initialize(): void {
@@ -21,14 +21,18 @@ export default class MusicManager {
         ];
         const beatLength: number = 60 / this.beatsPerMinute;
         let offsetTime: number = 0;
-        const notes: number[] = Arrays.flatten(progression.map(chord => chord.notes));
-        for (let i = 0; i < notes.length; i++) {
-            this.scheduleNote(notes[i], startingTime + offsetTime);
-            offsetTime += beatLength;
+        for (let i = 0; i < progression.length; i++) {
+            const notes: number[] = progression[i].notes;
+            for (let j = 0; j < 4; j++) {
+                for (let k = 0; k < notes.length; k++) {
+                    this.scheduleNote(notes[k], startingTime + offsetTime);
+                    offsetTime += beatLength;
+                }
+            }
         }
         window.setTimeout(() => {
             this.queueNextMeasures(startingTime + offsetTime);
-        }, offsetTime * 1000);
+        }, (startingTime + offsetTime - this.context.currentTime - 0.2) * 1000);
     }
 
     private static scheduleNote(note: number, start: number): void {
@@ -36,7 +40,7 @@ export default class MusicManager {
         const osc: OscillatorNode = this.context.createOscillator();
         osc.type = 'square';
         const gain: GainNode = this.context.createGain();
-        const duration: number = 0.1;
+        const duration: number = 0.05;
         osc.frequency.value = freq;
         osc.start(start);
         osc.stop(start + duration);
