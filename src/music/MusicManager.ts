@@ -20,10 +20,18 @@ export default class MusicManager {
         arp: new EnvOscInstrument('square', 0.01, 0.05, 0.0, 0.1)
     }
 
+    static masterGain: GainNode;
+
     static initialize(): void {
         this.context = new AudioContext();
+        this.masterGain = this.context.createGain();
+        this.masterGain.gain.value = 0.25;
+        this.masterGain.connect(this.context.destination);
         this.queueNextMeasures(this.context.currentTime, new Chord(60, ChordQualities.MINOR7));
-        console.log(this.generateProgression(new Chord(60, ChordQualities.MINOR7), 100).map(chord => chord.toString()).join(' -> '));
+    }
+
+    static setVolume(volume: number): void {
+        this.masterGain.gain.value = volume;
     }
 
     private static generateProgression(from: Chord, length: number): Chord[] {
@@ -70,9 +78,8 @@ export default class MusicManager {
     }
 
     private static scheduleNote(note: number, duration: number, start: number, inst: Instrument): void {
-        const freq: number = Notes.midiNumberToFrequency(note);
         const instOut: AudioNode = inst.scheduleNote(this.context, note, duration, start);
-        instOut.connect(this.context.destination);
+        instOut.connect(this.masterGain);
     }
 
 }
