@@ -1,6 +1,8 @@
 import { Chord, ChordQualities, ChordMotion } from './Chords.js';
 import { Notes } from './Notes.js';
 import { Arrays } from '../util/Arrays.js';
+import Instrument from './Instrument.js';
+import { EnvOscInstrument } from './Instruments.js';
 import { Random } from '../util/Random.js';
 
 export default class MusicManager {
@@ -13,6 +15,10 @@ export default class MusicManager {
         //proximate harmony :)
         new ChordMotion([ChordQualities.MAJOR7, ChordQualities.MINOR7], [-2, 2], [ChordQualities.DOM7, ChordQualities.MAJOR7, ChordQualities.MINOR7]),
     ];
+
+    static instruments = {
+        arp: new EnvOscInstrument('square', 0.01, 0.05, 0.0, 0.1)
+    }
 
     static initialize(): void {
         this.context = new AudioContext();
@@ -40,7 +46,7 @@ export default class MusicManager {
             const notes: number[] = this.constrainNotes(progression[i].notes, 60, 72).sort((a: number, b: number) => a - b);
             for (let j = 0; j < 4; j++) {
                 for (let k = 0; k < notes.length; k++) {
-                    this.scheduleNote(notes[k], startingTime + offsetTime);
+                    this.scheduleNote(notes[k], 0.2, startingTime + offsetTime, this.instruments.arp);
                     offsetTime += beatLength;
                 }
             }
@@ -63,19 +69,10 @@ export default class MusicManager {
         });
     }
 
-    private static scheduleNote(note: number, start: number): void {
+    private static scheduleNote(note: number, duration: number, start: number, inst: Instrument): void {
         const freq: number = Notes.midiNumberToFrequency(note);
-        const osc: OscillatorNode = this.context.createOscillator();
-        osc.type = 'square';
-        const gain: GainNode = this.context.createGain();
-        const duration: number = 0.05;
-        osc.frequency.value = freq;
-        osc.start(start);
-        osc.stop(start + duration);
-        osc.connect(gain);
-        gain.gain.setValueAtTime(1, start);
-        gain.gain.linearRampToValueAtTime(0, start + duration);
-        gain.connect(this.context.destination);
+        const instOut: AudioNode = inst.scheduleNote(this.context, note, duration, start);
+        instOut.connect(this.context.destination);
     }
 
 }
