@@ -17,7 +17,8 @@ export default class MusicManager {
     ];
 
     static instruments = {
-        arp: new EnvOscInstrument('square', 0.01, 0.05, 0.0, 0.1)
+        arp: new EnvOscInstrument('sine', 0.01, 0.05, 0.0, 0.1),
+        bass: new EnvOscInstrument('triangle', 0.01, 0.01, 1.0, 0.1),
     }
 
     static masterGain: GainNode;
@@ -51,6 +52,8 @@ export default class MusicManager {
         const beatLength: number = 60 / this.beatsPerMinute;
         let offsetTime: number = 0;
         for (let i = 0; i < progression.length; i++) {
+            const bass: number = this.constrainNote(progression[i].root, 36, 48);
+            this.scheduleNote(bass, beatLength * 16, startingTime + offsetTime, this.instruments.bass);
             const notes: number[] = this.constrainNotes(progression[i].notes, 60, 72).sort((a: number, b: number) => a - b);
             for (let j = 0; j < 4; j++) {
                 for (let k = 0; k < notes.length; k++) {
