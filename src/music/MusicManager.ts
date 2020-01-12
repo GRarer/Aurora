@@ -64,17 +64,20 @@ export default class MusicManager {
         }, (startingTime + offsetTime - this.context.currentTime - 0.2) * 1000);
     }
 
+    //shift note through the octaves until it ends up between min and max
+    private static constrainNote(note: number, min: number, max: number): number {
+        while (note < min) {
+            note += 12;
+        }
+        while (note > max) {
+            note -= 12;
+        }
+        return note;
+    }
+
     //shift notes through octaves so they end up between min and max inclusive
     private static constrainNotes(notes: number[], min: number, max: number): number[] {
-        return notes.map(note => {
-            while (note < min) {
-                note += 12;
-            }
-            while (note > max) {
-                note -= 12;
-            }
-            return note;
-        });
+        return notes.map(note => this.constrainNote(note, min, max));
     }
 
     private static scheduleNote(note: number, duration: number, start: number, inst: Instrument): void {
