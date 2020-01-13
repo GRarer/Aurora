@@ -1,5 +1,6 @@
 import Instrument from './Instrument.js';
 import { Notes } from './Notes.js';
+import Envelopes from './Envelopes.js';
 import { lerp } from '../util/Util.js';
 
 type OscType = typeof OscillatorNode.prototype.type;
@@ -29,24 +30,7 @@ export class EnvOscInstrument extends Instrument {
         osc.frequency.value = freq;
         osc.start(start);
         osc.stop(start + duration + this.sustain);
-        //initialize gain
-        const gain: GainNode = context.createGain();
-        gain.gain.setValueAtTime(0, start);
-        if (duration < this.attack) {
-            //note gets cut off in middle of attack
-            gain.gain.linearRampToValueAtTime(lerp(0, 1, duration / this.attack), start + duration);
-            gain.gain.linearRampToValueAtTime(0, start + duration + this.release);
-        } else if (duration < this.attack + this.decay) {
-            //note gets cut off in middle of decay
-            gain.gain.linearRampToValueAtTime(1, start + this.attack);
-            gain.gain.linearRampToValueAtTime(lerp(1, this.sustain, (duration - this.attack)/this.decay), start + this.attack + this.decay);
-            gain.gain.linearRampToValueAtTime(0, start + duration + this.release);
-        } else {
-            //envelope executes fully
-            gain.gain.linearRampToValueAtTime(1, start + this.attack);
-            gain.gain.linearRampToValueAtTime(this.sustain, start + this.attack + this.decay);
-            gain.gain.linearRampToValueAtTime(0, start + duration + this.release);
-        }
+        const gain: GainNode = Envelopes.createAdsrEnvelope(context, start, duration, this.attack, this.decay, this.sustain, this.release);
         //connect nodes
         osc.connect(gain);
         //make sure nodes get cleaned up afterward
