@@ -5,6 +5,17 @@ import { lerp } from '../util/Util.js';
 
 type OscType = typeof OscillatorNode.prototype.type;
 
+export interface OscConfig {
+    type: OscType
+}
+
+export interface AdsrConfig {
+    attack?: number,
+    decay?: number,
+    sustain?: number,
+    release?: number
+}
+
 export class EnvOscInstrument extends Instrument {
 
     type: OscType;
@@ -13,13 +24,13 @@ export class EnvOscInstrument extends Instrument {
     sustain: number;
     release: number;
 
-    constructor(type: OscType, attack: number, decay: number, sustain: number, release: number) {
+    constructor(osc: OscConfig, env: AdsrConfig) {
         super();
-        this.type = type;
-        this.attack = attack;
-        this.decay = decay;
-        this.sustain = sustain;
-        this.release = release;
+        this.type = osc.type;
+        this.attack = env.attack || 0;
+        this.decay = env.decay || 0;
+        this.sustain = env.sustain || 0;
+        this.release = env.release || 0;
     }
 
     scheduleNote(context: AudioContext, note: number, duration: number, start: number): AudioNode {
@@ -40,6 +51,5 @@ export class EnvOscInstrument extends Instrument {
         }
         return gain;
     }
-
 
 }

@@ -17,8 +17,14 @@ export default class MusicManager {
     ];
 
     static instruments = {
-        arp: new EnvOscInstrument('sine', 0.01, 0.05, 0.0, 0.1),
-        bass: new EnvOscInstrument('triangle', 0.01, 0.01, 1.0, 0.1),
+        arp: new EnvOscInstrument(
+            {type: 'sine'},
+            {attack: 0.01, decay: 0.05, sustain: 0.0, release: 0.1}
+        ),
+        bass: new EnvOscInstrument(
+            {type: 'triangle'},
+            {attack: 0.01, decay: 0.01, sustain: 1.0, release: 0.1}
+        ),
     }
 
     static masterGain: GainNode;
