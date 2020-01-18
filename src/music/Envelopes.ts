@@ -1,9 +1,20 @@
 import { lerp } from '../util/Util.js';
 
-export default class Envelopes {
+export interface AdsrConfig {
+    attack?: number,
+    decay?: number,
+    sustain?: number,
+    release?: number
+}
+
+export class Envelopes {
     
-    static createAdsrEnvelope(context: AudioContext, start: number, duration: number, attack: number,
-        decay: number, sustain: number, release: number, volume: number = 1): GainNode {
+    static createAdsrEnvelope(context: AudioContext, start: number, duration: number, env: AdsrConfig, volume: number = 1): GainNode {
+        //these are all optional, so make sure they're not undefined
+        const attack = env.attack || 0;
+        const decay = env.decay || 0;
+        const sustain = env.sustain || 0;
+        const release = env.release || 0;
         const gain: GainNode = context.createGain();
         gain.gain.setValueAtTime(0, start);
         if (duration < attack) {

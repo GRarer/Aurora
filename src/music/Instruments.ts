@@ -1,7 +1,8 @@
 import Instrument from './Instrument.js';
 import { Notes } from './Notes.js';
-import Envelopes from './Envelopes.js';
+import {Envelopes, AdsrConfig} from './Envelopes.js';
 import { lerp } from '../util/Util.js';
+import { BufferConfig } from './Buffers.js';
 
 type OscType = typeof OscillatorNode.prototype.type;
 
@@ -10,31 +11,18 @@ export interface OscConfig {
     detune?: number //detune in cents
 }
 
-export interface AdsrConfig {
-    attack?: number,
-    decay?: number,
-    sustain?: number,
-    release?: number
-}
-
 export class EnvOscInstrument extends Instrument {
 
     type: OscType;
     _detune: number;
-    attack: number;
-    decay: number;
-    sustain: number;
-    release: number;
+    env: AdsrConfig
 
     constructor(osc: OscConfig, env: AdsrConfig) {
         super();
         this.type = osc.type;
         this._detune = 1;
         this.detune = osc.detune || 0;
-        this.attack = env.attack || 0;
-        this.decay = env.decay || 0;
-        this.sustain = env.sustain || 0;
-        this.release = env.release || 0;
+        this.env = env;
     }
 
     set detune(n: number) {
@@ -50,17 +38,49 @@ export class EnvOscInstrument extends Instrument {
             freqs = [freq/this._detune, freq, freq * this._detune];
         }
         //create envelope
-        const gain: GainNode = Envelopes.createAdsrEnvelope(context, start, duration, this.attack, this.decay, this.sustain, this.release, Math.min(1 / freqs.length, 1));
+        const gain: GainNode = Envelopes.createAdsrEnvelope(context, start, duration, this.env, Math.min(1 / freqs.length, 1));
         //initialize oscillator(s)
         const oscs: OscillatorNode[] = freqs.map(freq => {
             const osc = context.createOscillator();
             osc.type = this.type;
             osc.frequency.value = freq;
             osc.start(start);
-            osc.stop(start + duration + this.sustain);
+            osc.stop(start + duration + (this.env.sustain || 0));
             osc.connect(gain);
             return osc;
         });
+        oscs[0].onended = () => {
+            gain.disconnect();
+        }
+        return gain;
+    }
+
+}
+
+export class BufferInstrument extends Instrument {
+
+    buffer: BufferConfig;
+    env: AdsrConfig;
+
+    constructor(buffer: BufferConfig, env: AdsrConfig) {
+        super();
+        this.buffer = buffer;
+        this.env = env;
+    }
+
+    scheduleNote(context: AudioContext, note: number, duration: number, start: number): AudioNode {
+        const freq: number = Notes.midiNumberToFrequency(note);
+        const bufferNode = context.createBufferSource();
+        bufferNode.buffer = this.buffer.buffer;
+        bufferNode.loop = this.buffer.loop;
+        bufferNode.playbackRate.setValueAtTime(freq / this.buffer.freq, start);
+        bufferNode.start(start);
+        bufferNode.stop(start + duration + (this.env.sustain || 0));
+        const gain: GainNode = Envelopes.createAdsrEnvelope(context, start, duration, this.env, 1);
+        bufferNode.connect(gain);
+        bufferNode.onended = () => {
+            gain.disconnect();
+        }
         return gain;
     }
 
