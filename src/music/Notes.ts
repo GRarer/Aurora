@@ -3,6 +3,7 @@ export interface Note {
     note: number, //the MIDI number of the note
     start: number, //starting time in seconds
     duration: number, //duration in seconds
+    endNote?: number, //MIDI number of note to end on. if undefined, this has no effect
 
 }
 
@@ -20,6 +21,15 @@ export class Notes {
             note += 12;
         }
         return this.noteNames[note % 12];
+    }
+
+    static detuneWithCoeff(note: number, detuneCoeff: number): number[] {
+        if (detuneCoeff === 1) {
+            return [this.midiNumberToFrequency(note)];
+        } else {
+            const freq: number = this.midiNumberToFrequency(note);
+            return [freq / detuneCoeff, freq, freq * detuneCoeff];
+        }
     }
 
 }
