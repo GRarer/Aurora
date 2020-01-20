@@ -2,6 +2,7 @@ import Instrument from './Instrument.js';
 import { Notes } from './Notes.js';
 import {Envelopes, AdsrConfig} from './Envelopes.js';
 import { lerp } from '../util/Util.js';
+import { Note } from './Notes.js';
 import { BufferConfig } from './Buffers.js';
 
 type OscType = typeof OscillatorNode.prototype.type;
@@ -29,8 +30,8 @@ export class EnvOscInstrument extends Instrument {
         this._detune = Math.pow(2, n/1200);
     }
 
-    scheduleNote(context: AudioContext, note: number, duration: number, start: number): AudioNode {
-        const freq: number = Notes.midiNumberToFrequency(note);
+    scheduleNote(context: AudioContext, note: Note): AudioNode {
+        const freq: number = Notes.midiNumberToFrequency(note.note);
         let freqs: number[] = [];
         if (this._detune === 1) {
             freqs = [freq];
@@ -38,14 +39,14 @@ export class EnvOscInstrument extends Instrument {
             freqs = [freq/this._detune, freq, freq * this._detune];
         }
         //create envelope
-        const gain: GainNode = Envelopes.createAdsrEnvelope(context, start, duration, this.env, Math.min(1 / freqs.length, 1));
+        const gain: GainNode = Envelopes.createAdsrEnvelope(context, note.start, note.duration, this.env, Math.min(1 / freqs.length, 1));
         //initialize oscillator(s)
         const oscs: OscillatorNode[] = freqs.map(freq => {
             const osc = context.createOscillator();
             osc.type = this.type;
             osc.frequency.value = freq;
-            osc.start(start);
-            osc.stop(start + duration + (this.env.sustain || 0));
+            osc.start(note.start);
+            osc.stop(note.start + note.duration + (this.env.sustain || 0));
             osc.connect(gain);
             return osc;
         });
@@ -68,15 +69,15 @@ export class BufferInstrument extends Instrument {
         this.env = env;
     }
 
-    scheduleNote(context: AudioContext, note: number, duration: number, start: number): AudioNode {
-        const freq: number = Notes.midiNumberToFrequency(note);
+    scheduleNote(context: AudioContext, note: Note): AudioNode {
+        const freq: number = Notes.midiNumberToFrequency(note.note);
         const bufferNode = context.createBufferSource();
         bufferNode.buffer = this.buffer.buffer;
         bufferNode.loop = this.buffer.loop;
-        bufferNode.playbackRate.setValueAtTime(freq / this.buffer.freq, start);
-        bufferNode.start(start);
-        bufferNode.stop(start + duration + (this.env.sustain || 0));
-        const gain: GainNode = Envelopes.createAdsrEnvelope(context, start, duration, this.env, 1);
+        bufferNode.playbackRate.setValueAtTime(freq / this.buffer.freq, note.start);
+        bufferNode.start(note.start);
+        bufferNode.stop(note.start + note.duration + (this.env.sustain || 0));
+        const gain: GainNode = Envelopes.createAdsrEnvelope(context, note.start, note.duration, this.env, 1);
         bufferNode.connect(gain);
         bufferNode.onended = () => {
             gain.disconnect();

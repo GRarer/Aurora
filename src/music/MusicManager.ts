@@ -1,5 +1,5 @@
 import { Chord, ChordQualities, ChordMotion } from './Chords.js';
-import { Notes } from './Notes.js';
+import { Note } from './Notes.js';
 import { Arrays } from '../util/Arrays.js';
 import Instrument from './Instrument.js';
 import { EnvOscInstrument } from './Instruments.js';
@@ -18,13 +18,17 @@ export default class MusicManager {
 
     static instruments = {
         arp: new EnvOscInstrument(
-            {type: 'sine'},
+            {type: 'sawtooth', detune: 3},
             {attack: 0.01, decay: 0.05, sustain: 0.0, release: 0.1}
         ),
         bass: new EnvOscInstrument(
-            {type: 'triangle'},
+            {type: 'triangle', detune: 2},
             {attack: 0.01, decay: 0.01, sustain: 1.0, release: 0.1}
         ),
+        pad: new EnvOscInstrument(
+            {type: 'triangle', detune: 4},
+            {attack: 1.0, decay: 1.0, sustain: 0.5, release: 0.5}
+        )
     }
 
     static masterGain: GainNode;
@@ -59,11 +63,24 @@ export default class MusicManager {
         let offsetTime: number = 0;
         for (let i = 0; i < progression.length; i++) {
             const bass: number = this.constrainNote(progression[i].root, 36, 48);
-            this.scheduleNote(bass, beatLength * 16, startingTime + offsetTime, this.instruments.bass);
+            this.scheduleNote({
+                note: bass,
+                duration: beatLength * 16,
+                start: startingTime + offsetTime}, this.instruments.bass);
             const notes: number[] = this.constrainNotes(progression[i].notes, 60, 72).sort((a: number, b: number) => a - b);
+            notes.forEach(note => {
+                note -= 12; //transpose down an octave
+                this.scheduleNote({
+                    note: note,
+                    duration: beatLength * 16,
+                    start: startingTime + offsetTime}, this.instruments.pad);
+            });
             for (let j = 0; j < 4; j++) {
                 for (let k = 0; k < notes.length; k++) {
-                    this.scheduleNote(notes[k], 0.2, startingTime + offsetTime, this.instruments.arp);
+                    this.scheduleNote({
+                        note: notes[k],
+                        duration: 0.2,
+                        start: startingTime + offsetTime}, this.instruments.arp);
                     offsetTime += beatLength;
                 }
             }
@@ -89,8 +106,8 @@ export default class MusicManager {
         return notes.map(note => this.constrainNote(note, min, max));
     }
 
-    private static scheduleNote(note: number, duration: number, start: number, inst: Instrument): void {
-        const instOut: AudioNode = inst.scheduleNote(this.context, note, duration, start);
+    private static scheduleNote(note: Note, inst: Instrument): void {
+        const instOut: AudioNode = inst.scheduleNote(this.context, note);
         instOut.connect(this.masterGain);
     }
 

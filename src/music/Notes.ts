@@ -1,3 +1,11 @@
+export interface Note {
+
+    note: number, //the MIDI number of the note
+    start: number, //starting time in seconds
+    duration: number, //duration in seconds
+
+}
+
 export class Notes {
 
     static readonly noteNames: string[] = ['C', 'C#', 'D', 'D#', 'E', 'F',
