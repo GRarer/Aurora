@@ -2,22 +2,22 @@ import Instrument from './Instrument.js';
 import {Envelopes, AdsrConfig} from './Envelopes.js';
 import { lerp } from '../util/Util.js';
 import { Note, Notes } from './Notes.js';
-import { BufferConfig } from './Buffers.js';
+import { SampleData } from './Samples.js';
 
 type OscType = typeof OscillatorNode.prototype.type;
 
-export interface OscConfig {
+export interface OscillatorConfig {
     type: OscType, //either 'sine', 'triangle', 'square', or 'sawtooth'
     detune?: number //detune in cents
 }
 
-export class EnvOscInstrument extends Instrument {
+export class AdsrOscillatorInstrument extends Instrument {
 
     type: OscType;
     _detune: number;
     env: AdsrConfig
 
-    constructor(osc: OscConfig, env: AdsrConfig) {
+    constructor(osc: OscillatorConfig, env: AdsrConfig) {
         super();
         this.type = osc.type;
         this._detune = 1;
@@ -55,12 +55,12 @@ export class EnvOscInstrument extends Instrument {
 
 }
 
-export class BufferInstrument extends Instrument {
+export class SampleInstrument extends Instrument {
 
-    buffer: BufferConfig;
+    buffer: SampleData;
     env: AdsrConfig;
 
-    constructor(buffer: BufferConfig, env: AdsrConfig) {
+    constructor(buffer: SampleData, env: AdsrConfig) {
         super();
         this.buffer = buffer;
         this.env = env;

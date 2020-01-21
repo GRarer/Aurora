@@ -1,14 +1,14 @@
-export interface BufferConfig {
+export interface SampleData {
     buffer: AudioBuffer,
     loop: boolean, //true if should loop, false otherwise
     freq: number //frequency of sample for pitchshifting reasons
 }
 
-export enum BufferNames {
+export enum SampleNames {
     WHITE_NOISE = 'white_noise'
 }
 
-export class Buffers {
+export class SampleUtils {
 
     static createBufferFromGenerator(length: number, func: (i: number) => number): AudioBuffer {
         const arr: Float32Array = new Float32Array(length);
@@ -22,6 +22,6 @@ export class Buffers {
 
 }
 
-export const AudioBuffers: Record<BufferNames, BufferConfig> = {
-    'white_noise': {buffer: Buffers.createBufferFromGenerator(44100, (i) => 2 * Math.random() - 1), loop: true, freq: 440}
+export const Samples: Record<SampleNames, SampleData> = {
+    'white_noise': {buffer: SampleUtils.createBufferFromGenerator(44100, (i) => 2 * Math.random() - 1), loop: true, freq: 440}
 }

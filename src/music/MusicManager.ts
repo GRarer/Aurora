@@ -2,7 +2,7 @@ import { Chord, ChordQualities, ChordMotion } from './Chords.js';
 import { Note } from './Notes.js';
 import { Arrays } from '../util/Arrays.js';
 import Instrument from './Instrument.js';
-import { EnvOscInstrument } from './Instruments.js';
+import { AdsrOscillatorInstrument } from './Instruments.js';
 import { Random } from '../util/Random.js';
 
 export default class MusicManager {
@@ -17,15 +17,15 @@ export default class MusicManager {
     ];
 
     static instruments = {
-        arp: new EnvOscInstrument(
+        arp: new AdsrOscillatorInstrument(
             {type: 'sawtooth', detune: 3},
             {attack: 0.01, decay: 0.05, sustain: 0.0, release: 0.1}
         ),
-        bass: new EnvOscInstrument(
+        bass: new AdsrOscillatorInstrument(
             {type: 'triangle', detune: 2},
             {attack: 0.01, decay: 0.01, sustain: 1.0, release: 0.1}
         ),
-        pad: new EnvOscInstrument(
+        pad: new AdsrOscillatorInstrument(
             {type: 'triangle', detune: 4},
             {attack: 1.0, decay: 1.0, sustain: 0.5, release: 0.5}
         )
@@ -72,6 +72,7 @@ export default class MusicManager {
                 note -= 12; //transpose down an octave
                 this.scheduleNote({
                     note: note,
+                    endNote: note + 12,
                     duration: beatLength * 16,
                     start: startingTime + offsetTime}, this.instruments.pad);
             });
@@ -79,6 +80,7 @@ export default class MusicManager {
                 for (let k = 0; k < notes.length; k++) {
                     this.scheduleNote({
                         note: notes[k],
+                        endNote: notes[k] + 12,
                         duration: 0.2,
                         start: startingTime + offsetTime}, this.instruments.arp);
                     offsetTime += beatLength;
