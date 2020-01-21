@@ -4,6 +4,7 @@ import { Arrays } from '../util/Arrays.js';
 import Instrument from './Instrument.js';
 import { AdsrOscillatorInstrument } from './Instruments.js';
 import { Random } from '../util/Random.js';
+import { Drumkit, Drums } from './Drums.js';
 
 export default class MusicManager {
 
@@ -32,12 +33,14 @@ export default class MusicManager {
     }
 
     static masterGain: GainNode;
+    static drumkit: Drumkit;
 
     static initialize(): void {
         this.context = new AudioContext();
         this.masterGain = this.context.createGain();
         this.masterGain.gain.value = 0.25;
         this.masterGain.connect(this.context.destination);
+        this.drumkit = new Drumkit();
         this.queueNextMeasures(this.context.currentTime, new Chord(60, ChordQualities.MINOR7));
     }
 
@@ -61,6 +64,7 @@ export default class MusicManager {
         console.log(`chords: ${progression.map(chord => chord.toString()).join(', ')}`);
         const beatLength: number = 60 / this.beatsPerMinute;
         let offsetTime: number = 0;
+        const drumLoop: Drums[] = [Drums.KICK, Drums.CLOSED_HI_HAT, Drums.SNARE, Drums.OPEN_HI_HAT];
         for (let i = 0; i < progression.length; i++) {
             const bass: number = this.constrainNote(progression[i].root, 36, 48);
             this.scheduleNote({
@@ -72,15 +76,14 @@ export default class MusicManager {
                 note -= 12; //transpose down an octave
                 this.scheduleNote({
                     note: note,
-                    endNote: note + 12,
                     duration: beatLength * 16,
                     start: startingTime + offsetTime}, this.instruments.pad);
             });
             for (let j = 0; j < 4; j++) {
+                this.scheduleDrum(startingTime + offsetTime, drumLoop[j]);
                 for (let k = 0; k < notes.length; k++) {
                     this.scheduleNote({
                         note: notes[k],
-                        endNote: notes[k] + 12,
                         duration: 0.2,
                         start: startingTime + offsetTime}, this.instruments.arp);
                     offsetTime += beatLength;
@@ -111,6 +114,11 @@ export default class MusicManager {
     private static scheduleNote(note: Note, inst: Instrument): void {
         const instOut: AudioNode = inst.scheduleNote(this.context, note);
         instOut.connect(this.masterGain);
+    }
+
+    private static scheduleDrum(start: number, drum: Drums): void {
+        const drumOut: AudioNode = this.drumkit.scheduleHit(this.context, start, drum);
+        drumOut.connect(this.masterGain);
     }
 
 }
