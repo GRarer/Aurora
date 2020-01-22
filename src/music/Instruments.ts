@@ -17,8 +17,8 @@ export class AdsrOscillatorInstrument extends Instrument {
     _detune: number;
     env: AdsrConfig
 
-    constructor(osc: OscillatorConfig, env: AdsrConfig) {
-        super();
+    constructor(osc: OscillatorConfig, env: AdsrConfig, volume: number = 1) {
+        super(volume);
         this.type = osc.type;
         this._detune = 1;
         this.detune = osc.detune || 0;
@@ -34,7 +34,8 @@ export class AdsrOscillatorInstrument extends Instrument {
         //note ending frequencies are either where they started or at the endNote
         let endfreqs: number[] = (note.endNote === undefined) ? freqs : Notes.detuneWithCoeff(note.endNote, this._detune);
         //create envelope
-        const gain: GainNode = Envelopes.createAdsrEnvelope(context, note.start, note.duration, this.env, Math.min(1 / freqs.length, 1));
+        const gain: GainNode = Envelopes.createAdsrEnvelope(context, note.start, note.duration,
+            this.env, Math.min(1 / freqs.length, 1) * this.volume);
         const end = note.start + note.duration + (this.env.sustain || 0);
         //initialize oscillator(s)
         const oscs: OscillatorNode[] = freqs.map((freq, i) => {
@@ -60,8 +61,8 @@ export class SampleInstrument extends Instrument {
     buffer: SampleData;
     env: AdsrConfig;
 
-    constructor(buffer: SampleData, env: AdsrConfig) {
-        super();
+    constructor(buffer: SampleData, env: AdsrConfig, volume: number = 1) {
+        super(volume);
         this.buffer = buffer;
         this.env = env;
     }
@@ -79,7 +80,7 @@ export class SampleInstrument extends Instrument {
         }
         bufferNode.start(note.start);
         bufferNode.stop(endtime);
-        const gain: GainNode = Envelopes.createAdsrEnvelope(context, note.start, note.duration, this.env, 1);
+        const gain: GainNode = Envelopes.createAdsrEnvelope(context, note.start, note.duration, this.env, this.volume);
         bufferNode.connect(gain);
         bufferNode.onended = () => {
             gain.disconnect();
