@@ -60,38 +60,15 @@ export default class MusicManager {
     }
 
     private static queueNextMeasures(startingTime: number, startingChord: Chord): void {
-        const progression: Chord[] = this.generateProgression(startingChord, 2);
-        console.log(`chords: ${progression.map(chord => chord.toString()).join(', ')}`);
         const beatLength: number = 60 / this.beatsPerMinute;
         let offsetTime: number = 0;
         const drumLoop: Drums[] = [Drums.KICK, Drums.CLOSED_HI_HAT, Drums.SNARE, Drums.OPEN_HI_HAT];
-        for (let i = 0; i < progression.length; i++) {
-            const bass: number = this.constrainNote(progression[i].root, 36, 48);
-            this.scheduleNote({
-                note: bass,
-                duration: beatLength * 16,
-                start: startingTime + offsetTime}, this.instruments.bass);
-            const notes: number[] = this.constrainNotes(progression[i].notes, 60, 72).sort((a: number, b: number) => a - b);
-            notes.forEach(note => {
-                note -= 12; //transpose down an octave
-                this.scheduleNote({
-                    note: note,
-                    duration: beatLength * 16,
-                    start: startingTime + offsetTime}, this.instruments.pad);
-            });
-            for (let j = 0; j < 4; j++) {
-                this.scheduleDrum(startingTime + offsetTime, drumLoop[j]);
-                for (let k = 0; k < notes.length; k++) {
-                    this.scheduleNote({
-                        note: notes[k],
-                        duration: 0.2,
-                        start: startingTime + offsetTime}, this.instruments.arp);
-                    offsetTime += beatLength;
-                }
-            }
+        for (let i = 0; i < drumLoop.length; i++) {
+            this.scheduleDrum(startingTime + offsetTime, drumLoop[i]);
+            offsetTime += beatLength;
         }
         window.setTimeout(() => {
-            this.queueNextMeasures(startingTime + offsetTime, progression[progression.length - 1]);
+            this.queueNextMeasures(startingTime + offsetTime, startingChord);
         }, (startingTime + offsetTime - this.context.currentTime - 0.2) * 1000);
     }
 
