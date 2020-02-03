@@ -8,6 +8,12 @@
     font-family: monospace;
 }
 
+body {
+    height: 100vh;
+    margin: 0;
+    overflow-y: hidden;
+}
+
 button {
     font-size: 18px;
     /* we set these again here because otherwise the user agent stylesheet
