@@ -29,8 +29,8 @@
 }
 
 .map-canvas {
-    height: min(100%, calc((100vw - 440px) * 4 / 5));
-    width: min(100%, calc((100vh - var(--world-screen-header-height)) * 5 / 4));
+    height: min(100%, calc((100vw - 440px) * 4 / 6));
+    width: min(100%, calc((100vh - var(--world-screen-header-height)) * 6 / 4));
     margin: 0;
 }
 
