@@ -1,12 +1,8 @@
-:root {
-    --world-screen-header-height: 70px;
-}
-
 .world-screen-header {
     display: flex;
     flex-direction: row;
     margin: 0px;
-    height: var(--world-screen-header-height);
+    height: 70px;
 }
 
 .world-screen-quest-description {
@@ -21,36 +17,38 @@
     font-weight: bold;
 }
 
+.world-screen-hbox {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+}
+
 .world-screen-map-box {
-    height: calc(100vh - var(--world-screen-header-height));
-    width: calc(100vw - 440px);
-    display: inline-block;
-    text-align: center;
-    flex-grow: 3;
+    height: 100%;
+    width: 100%;
 }
 
 .map-canvas {
-    height: min(100%, calc((100vw - 440px) * 4 / 6));
-    width: auto;
+    width: 100%;
+    margin: 0;
 }
 
 .world-screen-sidebar {
     background-color: black;
-    min-width: 150px;
+    height: calc(100vh - 110px);
+    width: 20%;
     padding: 20px;
     font-size: 16px;
-    height: calc(100vh - var(--world-screen-header-height) - 40px);
     overflow-y: auto;
-    float: right;
-    flex-grow: 1;
+    flex-shrink: 0;
 }
 
 .world-screen-inventory {
-    min-width: 200px;
-    padding: 20px;
+    width: 20%;
+    height: calc(100vh - 90px);
+    margin: 10px;
     font-size: 16px;
-    float: left;
-    height: calc(100vh - var(--world-screen-header-height) - 40px);
+    overflow-x: hidden;
     overflow-y: auto;
-    flex-grow: 1;
+    flex-shrink: 0;
 }

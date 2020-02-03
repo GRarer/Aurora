@@ -35,9 +35,9 @@ export default class WorldScreen {
                 inventoryHTML,
                 UI.makeDivContaining([mapHTML], ['world-screen-map-box']),
                 tileSidebarHTML,
-            ], ['flex-horizontal']),
+            ], ['world-screen-hbox']),
 
-        ], []);
+        ], ['flex-vertical']);
     }
 
     public getHTML(): HTMLElement {
