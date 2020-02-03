@@ -29,8 +29,8 @@
 }
 
 .map-canvas {
-    max-width: calc(100vw - 440px);
-    max-height: calc(100vh - var(--world-screen-header-height));
+    height: min(100%, calc((100vw - 440px) * 4 / 5));
+    width: min(100%, calc((100vh - var(--world-screen-header-height)) * 5 / 4));
     margin: 0;
 }
 
