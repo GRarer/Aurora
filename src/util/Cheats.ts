@@ -47,7 +47,8 @@ export function enableCheats(run: Game, worldScreen: WorldScreen) {
 // removes cheats and associated attributes from global scope
 export function disableCheats() {
     const theWindow: any = window;
-    theWindow.cheats = undefined;
+    theWindow.cheatsAddResource = undefined;
+    theWindow.cheatsAddPopulation = undefined;
     theWindow.Resources = undefined;
     theWindow.Species = undefined;
 }
