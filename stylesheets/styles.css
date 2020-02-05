@@ -1,6 +1,7 @@
 @import 'menus.css';
 @import 'worldscreen.css';
 @import 'productionscreen.css';
+@import 'transitionscreen.css';
 
 :root {
     background-color: black;

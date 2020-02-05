@@ -63,8 +63,8 @@ export default class GameWindow {
         const transitionScreen = new TransitionScreen();
         UI.fillHTML(this.rootDiv, [transitionScreen.getHTML()]);
 
+        transitionScreen.startLoading();
         this.currentRun.completeTurn(); // update game state
-
         transitionScreen.revealButton();
     }
 }
