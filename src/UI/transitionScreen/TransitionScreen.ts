@@ -1,25 +1,13 @@
 import UI from "../UI.js";
 import GameWindow from "../GameWindow.js";
+import Quote from "./Quote.js";
 
 // "loading" screen shown between turns
 export default class TransitionScreen {
     private html: HTMLElement;
     private loadingArea: HTMLElement;
     private loadingBar: HTMLElement;
-    private quote: [string, string];
-
-    //Quotes are of form ["quote", "attribution"]
-    //The quote will be automatically formatted to add quotation marks and a dash before the attribution
-    private static readonly QUOTES: [string, string][] = [
-        ["quote1", "attribution1"],
-        ["quote2", "attribution2"],
-        ["quote3", "attribution3"],
-        ["quote4", "attribution4"],
-        ["quote5", "attribution5"],
-        ["quote6", "attribution6"],
-        ["quote7", "attribution7"],
-        ["quote8", "attribution8"]
-    ];
+    private quote: Quote;
 
     constructor() {
         this.html = UI.makeDiv();
@@ -27,12 +15,12 @@ export default class TransitionScreen {
         this.loadingArea = UI.makeDivContaining([
             this.loadingBar
         ], ['transition-loading-area']);
-        this.quote = TransitionScreen.QUOTES[Math.floor(Math.random() * TransitionScreen.QUOTES.length)];
+        this.quote = Quote.getRandomQuote();
 
         UI.fillHTML(this.html, [
             UI.makeDivContaining([
-                UI.makePara(this.quote[0].replace(/^ *(?=[^"])/, "\"").replace(/(?<=[^"]) *$/, "\""), ['transition-quote']),
-                UI.makePara(this.quote[1].replace(/^ *(?=[^\-])/, "- "), ['transition-attribution'])
+                UI.makePara(this.quote.getQuote()),
+                UI.makePara(this.quote.getAttribution(), ['transition-attribution'])
             ], ['transition-quote-panel']),
             this.loadingArea
         ]);
