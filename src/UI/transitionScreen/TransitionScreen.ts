@@ -1,6 +1,7 @@
 import UI from "../UI.js";
 import GameWindow from "../GameWindow.js";
 import Quote from "./Quote.js";
+import { indentWithNBS } from "../../util/Text.js";
 
 // "loading" screen shown between turns
 export default class TransitionScreen {
@@ -17,10 +18,12 @@ export default class TransitionScreen {
         ], ['transition-loading-area']);
         this.quote = Quote.getRandomQuote();
 
+        // Add in leading quote after leading whitespace
+        let quotedText = indentWithNBS(this.quote.text).replace(/^(\s*)/, "$1“") + "”";
         UI.fillHTML(this.html, [
             UI.makeDivContaining([
-                UI.makePara(this.quote.getQuote()),
-                UI.makePara(this.quote.getAttribution(), ['transition-attribution'])
+                UI.makePara(`${quotedText}`),
+                UI.makePara(`-${this.quote.attribution}`, ['transition-attribution'])
             ], ['transition-quote-panel']),
             this.loadingArea
         ]);
