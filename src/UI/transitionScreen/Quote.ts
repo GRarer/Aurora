@@ -1,7 +1,9 @@
+import Random from "../../util/Random.js";
+
 export default class Quote {
     
-    private quote: string;
-    private attribution: string;
+    readonly quote: string;
+    readonly attribution: string;
 
     //Quotes are of form ["quote", "attribution"]
     //The quote will be automatically formatted to add quotation marks and a dash before the attribution
@@ -17,12 +19,16 @@ export default class Quote {
     ]
 
     constructor(quote: string, attribution: string) {
-        this.quote = quote.replace(/^ *(?=[^"])/, "\"").replace(/(?<=[^"]) *$/, "\"");
-        this.attribution = attribution.replace(/^ *(?=[^\-])/, "- ");
+
+        //Trims outer white space and adds quotation marks if they aren't already there
+        this.quote = quote.trim().replace(/^(?=[^"])/, "\"").replace(/(?<=[^"])$/, "\"");
+        
+        //Trims outer white space and adds a '-' before the attribution if not already there
+        this.attribution = attribution.trim().replace(/^(?=[^\-])/, "- ");
     }
 
     static getRandomQuote(): Quote {
-        return this.QUOTES[Math.floor(Math.random() * this.QUOTES.length)];
+        return Random.fromArray(this.QUOTES);
     }
 
     getQuote(): string {
