@@ -36,10 +36,7 @@ export default class TransitionScreen implements Page {
     refresh(): void {}
 
     startLoading(): void {
-        setTimeout(() => this.loadingArea.classList.add("loading"));
         this.run.completeTurn();
-
-        setTimeout(() => this.loadingArea.classList.add("loaded"));
         setTimeout(() => {
             UI.fillHTML(this.loadingArea, [
                 UI.makeButton("Continue", () => { this.continueToNextTurn(); })
