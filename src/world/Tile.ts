@@ -27,6 +27,7 @@ export default abstract class Tile {
     ) {}
 
     abstract getTileName(): string; // returns the name of the tile type
+    abstract getTileDescription(): string; // return the tile type's description
 
 }
 
@@ -34,4 +35,7 @@ export default abstract class Tile {
   * Tile subclasses that are used by predicates in this way
   * will need to declare a static readonly tileName string
   */
-export type NamedTileType = typeof Tile & { readonly tileName: string; };
+export type NamedTileType = typeof Tile & {
+    readonly tileName: string;
+    readonly tileDescription: string;
+};

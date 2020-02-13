@@ -27,7 +27,11 @@ export default class Mountain extends Tile {
     ];
 
     static readonly tileName: string = "Mountain";
+    static readonly tileDescription: string = "A large geological formation containing useful mineral resources.";
     getTileName(): string {
         return Mountain.tileName;
+    }
+    getTileDescription(): string {
+        return Mountain.tileDescription;
     }
 }

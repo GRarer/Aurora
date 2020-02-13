@@ -40,7 +40,11 @@ export default class Lander extends Tile {
     }
 
     static readonly tileName: string = "Landing Pod";
+    static readonly tileDescription: string = "A landing spacecraft designed to deliver a set of human colonists. Opening it will aid in fulfilling mission parameters.";
     getTileName(): string {
         return Lander.tileName;
+    }
+    getTileDescription(): string {
+        return Lander.tileDescription;
     }
 }

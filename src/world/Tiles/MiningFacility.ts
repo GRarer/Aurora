@@ -54,7 +54,11 @@ export default class MiningFacility extends Tile {
     ];
 
     static readonly tileName: string = "Ore Processing Center";
+    static readonly tileDescription: string = "A facility used to process ore obtained from mining into useful materials.";
     getTileName(): string {
         return MiningFacility.tileName;
+    }
+    getTileDescription(): string {
+        return MiningFacility.tileDescription;
     }
 }
