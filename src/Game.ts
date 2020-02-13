@@ -1,13 +1,13 @@
 import World from "./world/World.js";
 import Inventory from "./resources/Inventory.js";
 import Tile from "./world/Tile.js";
-import { Arrays } from "./util/Arrays.js";
 import Conversion from "./resources/Conversion.js";
 import WorldGenerationParameters from "./world/WorldGenerationParameters.js";
 import { QuestStage } from "./quests/QuestStage.js";
 import { TutorialQuestUnpackLander } from "./quests/Quests.js";
 import Technology from "./techtree/Technology.js";
 import { ResearchableTechnologies } from "./techtree/TechTree.js";
+import { Arrays } from "./util/Arrays.js";
 
 // Holds the state of one run of the game, including the game world, inventory, and run statistics
 export default class Game {
@@ -22,7 +22,7 @@ export default class Game {
     private completedTechs: Technology[] = [];
 
     constructor() {
-        this.world = new World (WorldGenerationParameters.standardWorldParameters());
+        this.world = new World(WorldGenerationParameters.standardWorldParameters());
         this.inventory = new Inventory(this.world);
         this.questStage = TutorialQuestUnpackLander;
     }
@@ -32,7 +32,7 @@ export default class Game {
     }
 
     getCurrentQuestHint(): string | undefined {
-        return this.questStage.hint
+        return this.questStage.hint;
     }
 
     getPreviousQuestDescription(): string {
@@ -40,14 +40,14 @@ export default class Game {
     }
 
     // returns all available resource conversions in the order in which they will be applied
-    getResourceConversions() {
+    getResourceConversions(): Conversion[] {
         const allConversions: Conversion[] = Arrays.flatten(this.world.getTiles().map((tile: Tile) => tile.resourceConversions));
         // sort by priority number
         allConversions.sort((a: Conversion, b: Conversion) => (a.priority - b.priority));
         return allConversions;
     }
 
-    updateQuestState() {
+    updateQuestState(): void {
         const nextStage = this.questStage.updatedStage(this);
         if (nextStage != this.questStage) {
             this.prevQuestDescription = this.questStage.description;
@@ -60,7 +60,7 @@ export default class Game {
         return this.completedTechs.includes(tech);
     }
 
-    unlockTechnology(tech: Technology) {
+    unlockTechnology(tech: Technology): void {
         if (!this.hasUnlockedTechnology(tech)) {
             this.completedTechs.push(tech);
         }
@@ -78,7 +78,7 @@ export default class Game {
     }
 
     // this is called at the end of each turn
-    completeTurn() {
+    completeTurn(): void {
         // calculate resource production
         this.inventory.applyConversions(this.getResourceConversions());
 
@@ -91,7 +91,7 @@ export default class Game {
     }
 
     // moves a resource conversion up by 1 in the production order
-    increaseConversionPriority(conversion: Conversion) {
+    increaseConversionPriority(conversion: Conversion): void {
         if (conversion.priority == 0) {
             return; // priority #0 is for the free conversions (conversions with no inputs), which should not be moved to any other priority
         }
@@ -101,8 +101,7 @@ export default class Game {
 
         if (index == -1) {
             return; // conversion not found in the current world
-        }
-        else if (index == 0) {
+        } else if (index == 0) {
             return; // already first in line
         }
 
@@ -117,7 +116,7 @@ export default class Game {
     }
 
     // moves a resource conversion down by 1 in the production order
-    decreaseConversionPriority(conversion: Conversion) {
+    decreaseConversionPriority(conversion: Conversion): void {
         if (conversion.priority == 0) {
             return; // priority #0 is for the free conversions (conversions with no inputs), which should not be moved to any other priority
         }
@@ -127,8 +126,7 @@ export default class Game {
 
         if (index == -1) {
             return; // conversion not found in the current world
-        }
-        else if (index == (conversionsList.length - 1)) {
+        } else if (index == (conversionsList.length - 1)) {
             return; // already first last in line
         }
 

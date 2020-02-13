@@ -14,7 +14,7 @@ if [ "$MINIFY" = true ]; then
   npm run minify
   cp dist/index.html "$target"
 else
-  cp -r out "$target"
+  cp -r dist "$target"
   cp -r stylesheets "$target"
   cp index.html "$target"
 fi

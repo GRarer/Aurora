@@ -1,21 +1,22 @@
 import Game from "../../Game.js";
-import UI from "../UI.js";
-import GameWindow from "../GameWindow.js";
+import { UI } from "../UI.js";
+import { GameWindow, Page } from "../GameWindow.js";
 import Conversion from "../../resources/Conversion.js";
 import Inventory from "../../resources/Inventory.js";
+import WorldScreen from "../worldScreen/WorldScreen.js";
 
 // the production screen is where the player selects the priority order for resource conversions
-export default class ProductionScreen {
-    private html: HTMLElement;
+export default class ProductionScreen implements Page {
+    readonly html: HTMLElement;
     private run: Game;
 
     constructor(run: Game) {
         this.run = run;
-        this.html = UI.makeDiv(['production-screen']);
+        this.html = UI.makeDiv(["production-screen"]);
         this.refresh();
     }
 
-    refresh() {
+    refresh(): void {
         // clone of the inventory that represents what the inventory will be after this turn's conversions are applied
         const inventoryCopy = this.run.inventory.clone();
 
@@ -46,11 +47,11 @@ export default class ProductionScreen {
             UI.makePara(`Unused workers at end of next production cycle: ${inventoryCopy.getAvailableWorkers()}`, [`production-screen-label`]),
             UI.makePara("Resources available at end of next production cycle:", [`production-screen-label`]),
             this.renderInventory(inventoryCopy),
-            UI.makeButton("Back", () => {GameWindow.showWorldScreen();}, ['production-screen-back-button']),
+            UI.makeButton("Back", () => {GameWindow.show(new WorldScreen(this.run));}, ["production-screen-back-button"]),
         ]);
     }
 
-    getHTML() {
+    getHTML(): HTMLElement {
         return this.html;
     }
 
@@ -61,17 +62,17 @@ export default class ProductionScreen {
             resourceDescriptions.push(UI.makePara("(none)"));
         }
 
-        return UI.makeDivContaining(resourceDescriptions, ['production-screen-inventory']);
+        return UI.makeDivContaining(resourceDescriptions, ["production-screen-inventory"]);
     }
 
-    renderConversion(conversion: Conversion, canAfford: boolean, showMoveButtons: boolean) {
-        const div = UI.makeDiv(['flex-horizontal']);
+    renderConversion(conversion: Conversion, canAfford: boolean, showMoveButtons: boolean): HTMLElement {
+        const div = UI.makeDiv(["flex-horizontal"]);
 
         let text = conversion.toString();
-        let cssClass = 'conversion-description-normal'; // css class that changes to show the conversion's status
+        let cssClass = "conversion-description-normal"; // css class that changes to show the conversion's status
         if (!conversion.enabled) {
             text = `(disabled) ${conversion.toString()}`;
-            cssClass = 'conversion-description-disabled';
+            cssClass = "conversion-description-disabled";
         } else if (!canAfford) {
             text = `(cannot afford) ${conversion.toString()}`;
             cssClass = `conversion-description-cannot-afford`;
@@ -87,17 +88,17 @@ export default class ProductionScreen {
         return div;
     }
 
-    private moveConversionUp(conversion: Conversion) {
+    private moveConversionUp(conversion: Conversion): void {
         this.run.increaseConversionPriority(conversion);
         this.refresh();
     }
 
-    private moveConversionDown(conversion: Conversion) {
+    private moveConversionDown(conversion: Conversion): void {
         this.run.decreaseConversionPriority(conversion);
         this.refresh();
     }
 
-    private toggle(conversion: Conversion) {
+    private toggle(conversion: Conversion): void {
         conversion.enabled = !conversion.enabled;
         this.refresh();
     }

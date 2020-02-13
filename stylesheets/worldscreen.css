@@ -42,6 +42,14 @@
     height: calc(100vh - 125px);
 }
 
+.project-requirement-met {
+    color: white;
+}
+
+.project-requirement-unmet {
+    color: tomato;
+}
+
 .world-screen-inventory {
     width: 20%;
     margin: 10px;
