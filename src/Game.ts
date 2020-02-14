@@ -119,18 +119,18 @@ export default class Game {
         }
 
         // The priority of toIndex after shifting intermediate priorities
-        const priority = costly[fromIndex].priority;
+        const priority = costly[toIndex].priority;
         if (fromIndex < toIndex) {
-            // Shift intermediate priorities down
-            for (let i = fromIndex; i < toIndex; i++) {
-                costly[i].priority = costly[i + 1].priority;
-            }
-        } else {
             // Shift intermediate priorities up
-            for (let i = fromIndex; i > toIndex; i--) {
+            for (let i = toIndex; i > fromIndex; i--) {
                 costly[i].priority = costly[i - 1].priority;
             }
+        } else {
+            // Shift intermediate priorities down
+            for (let i = toIndex; i > fromIndex; i++) {
+                costly[i].priority = costly[i + 1].priority;
+            }
         }
-        costly[toIndex].priority = priority;
+        costly[fromIndex].priority = priority;
     }
 }
