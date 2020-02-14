@@ -51,6 +51,7 @@ export default class ResearchScreen implements Page {
             UI.makePara(tech.name),
             UI.makePara(tech.description),
             UI.makePara(`Development cost: ${tech.researchCost}`),
+            UI.makePara(`Available resources: ${tech.researchCost.resource.name} x${this.run.inventory.getResourceQuantity(tech.researchCost.resource)}`, ["project-requirement-unmet"])
         ]);
         let unmetPrereqs: number = 0;
         for (const prereq of tech.requiredTechs) {
