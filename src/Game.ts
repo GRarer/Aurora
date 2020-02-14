@@ -127,7 +127,7 @@ export default class Game {
             }
         } else {
             // Shift intermediate priorities down
-            for (let i = toIndex; i > fromIndex; i++) {
+            for (let i = toIndex; i < fromIndex; i++) {
                 costly[i].priority = costly[i + 1].priority;
             }
         }
