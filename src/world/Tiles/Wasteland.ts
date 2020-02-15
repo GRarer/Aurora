@@ -58,4 +58,9 @@ export default class Wasteland extends Tile {
     getTileName(): string {
         return Wasteland.tileName;
     }
+
+    static readonly tileDescription: string = "Of course humans would call this wasteland. Let's show them what this land can actually do."
+    getTileDescription(): string {
+        return Wasteland.tileDescription;
+    }
 }

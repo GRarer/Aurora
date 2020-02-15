@@ -22,4 +22,9 @@ export default class SolarPanels extends Tile {
     getTileName(): string {
         return SolarPanels.tileName;
     }
+
+    static readonly tileDescription: string = "These plebians probably don't know the meaning of Photovoltaic Arrays. I'll make it simple. Panels use sun for power zap-zap."
+    getTileDescription(): string {
+        return SolarPanels.tileDescription;
+    }
 }

@@ -57,4 +57,9 @@ export default class MiningFacility extends Tile {
     getTileName(): string {
         return MiningFacility.tileName;
     }
+
+    static readonly tileDescription: string = "This planet has such intriguing resources, but the humans will need my help, naturally, in putting them to good use."
+    getTileDescription(): string {
+        return MiningFacility.tileDescription;
+    }
 }

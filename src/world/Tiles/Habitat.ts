@@ -18,4 +18,9 @@ export default class Habitat extends Tile {
     getTileName(): string {
         return Habitat.tileName;
     }
+
+    static readonly tileDescription: string = "Humans unfortunately need a physical space to live, breath, and make my not-life more difficult. This is where they do that."
+    getTileDescription(): string {
+        return Habitat.tileDescription;
+    }
 }

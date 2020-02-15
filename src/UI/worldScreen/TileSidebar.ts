@@ -75,6 +75,7 @@ export default class TileSidebar implements Page {
 
         const button = UI.makeButton(
             project.title,
+            project.description,
             () => { this.doProject(project, tile); },
             [],
             project.canDo(tile.position, this.run) ? "enabled" : "disabled",

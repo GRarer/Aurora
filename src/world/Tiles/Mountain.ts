@@ -30,4 +30,9 @@ export default class Mountain extends Tile {
     getTileName(): string {
         return Mountain.tileName;
     }
+
+    static readonly tileDescription: string = "Different planet, same weird spikes sticking up out of the ground. Let's make quick work of them."
+    getTileDescription(): string {
+        return Mountain.tileDescription;
+    }
 }

@@ -43,4 +43,9 @@ export default class Lander extends Tile {
     getTileName(): string {
         return Lander.tileName;
     }
+
+    static readonly tileDescription: string = "We all had to get here some how. The best the humans could figure out was to shoot us here via egg. Let's spread out a little though, shall we?"
+    getTileDescription(): string {
+        return Lander.tileDescription;
+    }
 }
