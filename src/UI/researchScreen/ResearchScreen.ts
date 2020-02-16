@@ -20,14 +20,16 @@ export default class ResearchScreen implements Page {
         let researchHeader = UI.makeHeader("Available Research Projects");
 
         const possibleTechs: Technology[] = this.run.getResearchOptions();
-        const researchResources: Resource[] = Resource.values().filter(resource => possibleTechs.filter(tech => tech.researchCost.resource == resource).length != 0);
+        const researchResources: Resource[] = Resource.values().filter(resource => possibleTechs.some((tech) => tech.researchCost.resource == resource));
 
-        const researchResourcesHTML = UI.makeDivContaining(researchResources.length != 0
-            ? [
-                UI.makeHeader("Available Research Resources"),
-                ...researchResources.map(resource => UI.makePara(`${resource.name}: ${this.run.inventory.getResourceQuantity(resource)}`))
-            ]
-            : []);
+        const researchResourcesHTML: HTMLElement = UI.makeDiv();
+        if (researchResources.length != 0) {
+            researchResourcesHTML.appendChild(UI.makeHeader("Available Research Resources"));
+            researchResources.forEach(resource => researchResourcesHTML.appendChild(
+                UI.makePara(`${resource.name}: ${this.run.inventory.getResourceQuantity(resource)}`)
+            ));
+        }
+
         const researchOptionsHTML = UI.makeDivContaining(possibleTechs.map(tech => this.renderTechOption(tech)));
 
         if (possibleTechs.length == 0) {
