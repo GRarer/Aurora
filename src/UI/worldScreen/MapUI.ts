@@ -53,7 +53,7 @@ export default class MapUI implements Page {
         const x = coordinates.x - this.viewPosition.x;
         const y = coordinates.y - this.viewPosition.y;
 
-        if ((x < 0) || (y<0) || (x >= this.viewWidth) || (y >= this.viewHeight)) {
+        if ((x < 0) || (y < 0) || (x >= this.viewWidth) || (y >= this.viewHeight)) {
             return; // don't attempt to draw tiles outside the viewable area
         }
 

@@ -150,6 +150,9 @@ const styleRules = {
   "comma-spacing": "off",
   "@typescript-eslint/comma-spacing": "warn",
 
+  // Prefer `foo + bar` over `foo+bar`
+  "space-infix-ops": "warn",
+
   // Prefer double-quoted strings
   "quotes": "off",
   "@typescript-eslint/quotes": ["warn", "double", {

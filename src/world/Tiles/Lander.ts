@@ -24,7 +24,7 @@ export default class Lander extends Tile {
                 world.placeTile(new Habitat(new GridCoordinates(position.x + 1, position.y)));
                 world.placeTile(new MiningFacility(new GridCoordinates(position.x, position.y - 1)));
                 world.placeTile(new SolarPanels(new GridCoordinates(position.x + 1, position.y - 1)));
-                world.placeTile(new Greenhouse(new GridCoordinates(position.x -1, position.y)));
+                world.placeTile(new Greenhouse(new GridCoordinates(position.x - 1, position.y)));
 
                 // remove pod
                 world.placeTile(new Wasteland(position));
