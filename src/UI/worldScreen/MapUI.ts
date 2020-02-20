@@ -42,7 +42,11 @@ export default class MapUI implements Page {
     public refresh(): void {
         const tilesInViewableArea = this.world.getTilesInRectangle(this.viewPosition.x, this.viewPosition.y, this.viewWidth, this.viewHeight);
         for (const tile of tilesInViewableArea)  {
-            this.rerenderTile(tile);
+            this.drawSquareAtCoordinates(tile.texture, tile.position);
+        }
+        // render the highlight reticle thing
+        if (this.highlightedCoordinates !== null) {
+            this.drawSquareAtCoordinates(MapUI.highlightImage, this.highlightedCoordinates);
         }
     }
 
@@ -57,7 +61,15 @@ export default class MapUI implements Page {
             return; // don't attempt to draw tiles outside the viewable area
         }
 
-        context.drawImage(image, x * MapUI.pixelsPerTile, y * MapUI.pixelsPerTile, MapUI.pixelsPerTile, MapUI.pixelsPerTile);
+        const ratio = MapUI.pixelsPerTile / image.width;
+
+        const screenWidth = MapUI.pixelsPerTile;
+        const screenHeight = image.height * ratio; // necessary scaling for non 100xN images
+
+        const screenX = x * MapUI.pixelsPerTile;
+        const screenY = y * MapUI.pixelsPerTile - screenHeight + MapUI.pixelsPerTile; // make sure tall images line up properly
+
+        context.drawImage(image, screenX, screenY, screenWidth, screenHeight);
     }
 
     // redraws the given tile at that tile's position
