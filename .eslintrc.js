@@ -129,6 +129,9 @@ const styleRules = {
     "allowSingleLine": true,
   }],
 
+  // Prefer `if (...) { ... } over if (...) ...`
+  "curly": "warn",
+
   // Prefer `{ ... }` over `{...}`
   "object-curly-spacing": ["warn", "always"],
 
