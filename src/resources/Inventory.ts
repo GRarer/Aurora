@@ -125,7 +125,7 @@ export default class Inventory {
     }
 
     getResourceList(): Resource[] {
-        return Resource.values().filter(resource => this.resourceQuantities.get(resource) != 0);
+        return Resource.values().filter(resource => this.resourceQuantities.get(resource) !== 0);
     }
 
     // returns strings showing the resource type and amount for each resource in the inventory

@@ -35,7 +35,7 @@ export default class Conversion {
             const inputDescription = this.inputs.map((input: Cost) => input.toString()).join(", ");
             description = `Convert ${inputDescription} into ${outputDescription}`;
         }
-        if (this.requiredWorkers != 0) {
+        if (this.requiredWorkers !== 0) {
             description = description + ` using ${this.requiredWorkers} workers`;
         }
 
@@ -43,6 +43,6 @@ export default class Conversion {
     }
 
     isFree(): boolean {
-        return (this.inputs.length == 0) && (!this.requiredWorkers);
+        return (this.inputs.length === 0) && (!this.requiredWorkers);
     }
 }

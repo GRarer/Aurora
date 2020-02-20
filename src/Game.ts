@@ -72,7 +72,7 @@ export default class Game {
 
     updateQuestState(): void {
         const nextStage = this.questStage.updatedStage(this);
-        if (nextStage != this.questStage) {
+        if (nextStage !== this.questStage) {
             this.prevQuestDescription = this.questStage.description;
             this.questCompletionShown = false;
             this.questStage = nextStage;

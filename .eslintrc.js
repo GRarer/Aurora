@@ -120,11 +120,20 @@ const styleRules = {
     "ignoredNodes": ["TemplateLiteral > *"],
   }],
 
+  // Disallow trailing whitespace
+  "no-trailing-spaces": "warn",
+
   // Prefer the one true brace style
   "brace-style": "off",
   "@typescript-eslint/brace-style": ["warn", "1tbs", {
     "allowSingleLine": true,
   }],
+
+  // Prefer `if (...) { ... } over if (...) ...`
+  "curly": "warn",
+
+  // Prefer using `===` over `==`
+  "eqeqeq": "warn",
 
   // Prefer `{ ... }` over `{...}`
   "object-curly-spacing": ["warn", "always"],
@@ -149,6 +158,15 @@ const styleRules = {
   // Enforce consistent spacing around commas
   "comma-spacing": "off",
   "@typescript-eslint/comma-spacing": "warn",
+
+  // Prefer commas on the end of lines
+  "comma-style": "warn",
+
+  // Disallow unnecessary spaces
+  "no-multi-spaces": "warn",
+
+  // Prefer `foo + bar` over `foo+bar`
+  "space-infix-ops": "warn",
 
   // Prefer double-quoted strings
   "quotes": "off",

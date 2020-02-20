@@ -33,7 +33,7 @@ export class MinTilePredicate extends WorldPredicate {
         return (matchingTiles.length) >= this.minQuantity;
     }
     toString(): string {
-        const plural: string = (this.minQuantity == 1) ? "" : "s";
+        const plural: string = (this.minQuantity === 1) ? "" : "s";
         return `have at least ${this.minQuantity}  ${this.tileType.tileName} tile${plural}`;
     }
 }
