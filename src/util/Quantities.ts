@@ -26,7 +26,7 @@ export default class Quantities<T> {
         if (quantity < 0) {
             throw "tried to set quantity to negative value";
         }
-        if (quantity == 0) {
+        if (quantity === 0) {
             this.map.delete(key);
         } else {
             this.map.set(key, quantity);

@@ -52,7 +52,7 @@ export default class ProductionScreen implements Page {
         });
 
         const populationConsumptionHtml = UI.makeDiv();
-        if (this.run.inventory.getSpeciesList().length != 0) {
+        if (this.run.inventory.getSpeciesList().length !== 0) {
 
             // make another clone so that we can step through each species' resource consumption
             // but still be able to run the actual populationGrowth method on inventoryClone afterwards
@@ -123,7 +123,7 @@ export default class ProductionScreen implements Page {
     private renderInventory(inventory: Inventory): HTMLElement {
         const resourceDescriptions = inventory.getInventoryStrings().map(resourceString => UI.makePara(resourceString));
 
-        if (resourceDescriptions.length == 0) {
+        if (resourceDescriptions.length === 0) {
             resourceDescriptions.push(UI.makePara("(none)"));
         }
 

@@ -24,7 +24,7 @@ export class TileWithinDistancePredicate extends TilePredicate {
     }
 
     toString(): string {
-        if (this.radius == 1) {
+        if (this.radius === 1) {
             return `adjacent to a ${this.targetType.tileName}`;
         } else {
             return `within ${this.radius} units of a ${this.targetType.tileName}`;

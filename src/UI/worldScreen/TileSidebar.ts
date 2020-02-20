@@ -31,7 +31,7 @@ export default class TileSidebar implements Page {
     }
 
     refresh(): void {
-        if (this.position == null) {
+        if (this.position === null) {
             UI.fillHTML(this.html, [
                 UI.makePara(`No structure or terrain tile selected`),
             ]);
@@ -85,7 +85,7 @@ export default class TileSidebar implements Page {
         );
         projectHTML.appendChild(button);
 
-        if (project.costs.length == 0) {
+        if (project.costs.length === 0) {
             projectHTML.appendChild(UI.makePara("Cost: Free"));
         } else {
             const cssClass = this.run.inventory.canAfford(project.costs) ? "project-requirement-met" : "project-requirement-unmet";

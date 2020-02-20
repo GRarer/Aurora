@@ -132,6 +132,9 @@ const styleRules = {
   // Prefer `if (...) { ... } over if (...) ...`
   "curly": "warn",
 
+  // Prefer using `===` over `==`
+  "eqeqeq": "warn",
+
   // Prefer `{ ... }` over `{...}`
   "object-curly-spacing": ["warn", "always"],
 
@@ -158,6 +161,9 @@ const styleRules = {
 
   // Prefer commas on the end of lines
   "comma-style": "warn",
+
+  // Disallow unnecessary spaces
+  "no-multi-spaces": "warn",
 
   // Prefer `foo + bar` over `foo+bar`
   "space-infix-ops": "warn",

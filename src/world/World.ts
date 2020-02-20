@@ -84,7 +84,7 @@ export default class World {
         let capacity = 0;
 
         for (const tile of this.getTiles()) {
-            if (tile.populationCapacity && tile.populationCapacity.species == species) {
+            if (tile.populationCapacity && tile.populationCapacity.species === species) {
                 capacity = capacity + tile.populationCapacity.capacity;
             }
         }
