@@ -5,7 +5,7 @@ import { clamp } from "../../util/Util.js";
 import GridCoordinates from "../../world/GridCoordinates.js";
 import WorldScreen from "./WorldScreen.js";
 import { HighlightSelectionImage } from "../Images.js";
-import { Page, GameWindow } from "../GameWindow.js";
+import { Page } from "../GameWindow.js";
 
 // class to manage the UI canvas that shows the map
 export default class MapUI implements Page {
@@ -70,14 +70,6 @@ export default class MapUI implements Page {
         const screenY = y * MapUI.pixelsPerTile - screenHeight + MapUI.pixelsPerTile; // make sure tall images line up properly
 
         context.drawImage(image, screenX, screenY, screenWidth, screenHeight);
-    }
-
-    // redraws the given tile at that tile's position
-    private rerenderTile(tile: Tile): void {
-        this.drawSquareAtCoordinates(tile.texture, tile.position);
-        if (tile.position === this.highlightedCoordinates) {
-            this.drawSquareAtCoordinates(MapUI.highlightImage, tile.position);
-        }
     }
 
     private selectTile(tile: Tile | null): void {
