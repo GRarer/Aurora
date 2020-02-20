@@ -1,85 +1,45 @@
-import { Chord, ChordQualities, ChordMotion } from './Chords.js';
-import { Note } from './Notes.js';
-import { Arrays } from '../util/Arrays.js';
-import Instrument from './Instrument.js';
-import { AdsrOscillatorInstrument } from './Instruments.js';
-import { Random } from '../util/Random.js';
-import Rhythm from './Rhythm.js';
-import { Drumkit, Drums } from './Drums.js';
+import { Chord, ChordQualities, ChordMotion } from "./Chords.js";
+import { Note } from "./Notes.js";
+import Instrument from "./Instrument.js";
+import { AdsrOscillatorInstrument } from "./Instruments.js";
+import { Random } from "../util/Random.js";
+import Rhythm from "./Rhythm.js";
+import { Drumkit, Drums } from "./Drums.js";
 
-export default class MusicManager {
+export namespace MusicManager {
 
-    static beatsPerMinute: number = 220;
-    static context: AudioContext;
-    static motions: ChordMotion[] = [
-        //dominant function
+    export const beatsPerMinute: number = 220;
+    export const context: AudioContext = new AudioContext();
+    export const motions: ChordMotion[] = [
+        // dominant function
         new ChordMotion([ChordQualities.DOM7], [-1, -7, 5], [ChordQualities.DOM7, ChordQualities.MAJOR7, ChordQualities.MINOR7]),
-        //proximate harmony :)
+        // proximate harmony :)
         new ChordMotion([ChordQualities.MAJOR7, ChordQualities.MINOR7], [-2, 2], [ChordQualities.DOM7, ChordQualities.MAJOR7, ChordQualities.MINOR7]),
     ];
 
-    static instruments = {
+    export const instruments = {
         arp: new AdsrOscillatorInstrument(
-            {type: 'sawtooth', detune: 3},
-            {attack: 0.01, decay: 0.05, sustain: 0.0, release: 0.1}
+            { type: "sawtooth", detune: 3 },
+            { attack: 0.01, decay: 0.05, sustain: 0.0, release: 0.1 }
         ),
         bass: new AdsrOscillatorInstrument(
-            {type: 'triangle', detune: 2},
-            {attack: 0.01, decay: 0.01, sustain: 1.0, release: 0.1}
+            { type: "triangle", detune: 2 },
+            { attack: 0.01, decay: 0.01, sustain: 1.0, release: 0.1 }
         ),
         pad: new AdsrOscillatorInstrument(
-            {type: 'triangle', detune: 4},
-            {attack: 1.0, decay: 1.0, sustain: 0.5, release: 0.5}
+            { type: "triangle", detune: 4 },
+            { attack: 1.0, decay: 1.0, sustain: 0.5, release: 0.5 }
         )
-    }
+    };
 
-    static masterGain: GainNode;
-    static rhythm: Rhythm;
-    static drumkit: Drumkit;
+    export const masterGain: GainNode = context.createGain();
+    export const rhythm: Rhythm = new Rhythm();
+    export const drumkit: Drumkit = new Drumkit();
 
-    static initialize(): void {
-        this.context = new AudioContext();
-        this.masterGain = this.context.createGain();
-        this.masterGain.gain.value = 0.25;
-        this.masterGain.connect(this.context.destination);
-        this.rhythm = new Rhythm();
-        this.drumkit = new Drumkit();
-        this.queueNextMeasures(this.context.currentTime, new Chord(60, ChordQualities.MINOR7));
-    }
-
-    static setVolume(volume: number): void {
-        this.masterGain.gain.value = volume;
-    }
-
-    private static generateProgression(from: Chord, length: number): Chord[] {
-        const result: Chord[] = [];
-        for (let i = 0; i < length; i++) {
-            const allowedMotions = this.motions.filter(motion => motion.canStartOn(from));
-            const next: Chord = Random.fromArray(allowedMotions).nextFrom(from);
-            result.push(next);
-            from = next;
-        }
-        return result;
-    }
-
-    private static queueNextMeasures(startingTime: number, startingChord: Chord): void {
-        const beatLength: number = 60 / this.beatsPerMinute;
-        let offsetTime: number = 0;
-        this.rhythm.generateSubdivision(Random.fromArray([5, 6, 7, 8, 9, 11, 13]));
-        const drumLoop: Drums[] = this.generateDrumLoop();
-        for (let i = 0; i < drumLoop.length; i++) {
-            this.scheduleDrum(startingTime + offsetTime, drumLoop[i]);
-            offsetTime += beatLength;
-        }
-        window.setTimeout(() => {
-            this.queueNextMeasures(startingTime + offsetTime, startingChord);
-        }, (startingTime + offsetTime - this.context.currentTime - 0.2) * 1000);
-    }
-
-    private static generateDrumLoop(): Drums[] {
+    function generateDrumLoop(): Drums[] {
         const drumLoop: Drums[] = [];
-        const subdivision: number[] = this.rhythm.subdivision;
-        console.log(this.rhythm.beats, subdivision);
+        const subdivision: number[] = rhythm.subdivision;
+        console.log(rhythm.beats, subdivision);
         let onKick: boolean = true;
         for (let i = 0; i < subdivision.length; i++) {
             let acc: number = subdivision[i] - 1;
@@ -101,8 +61,37 @@ export default class MusicManager {
         return drumLoop;
     }
 
-    //shift note through the octaves until it ends up between min and max
-    private static constrainNote(note: number, min: number, max: number): number {
+    function scheduleDrum(start: number, drum: Drums): void {
+        const drumOut: AudioNode = drumkit.scheduleHit(context, start, drum);
+        drumOut.connect(masterGain);
+    }
+
+    function queueNextMeasures(startingTime: number, startingChord: Chord): void {
+        const beatLength: number = 60 / beatsPerMinute;
+        let offsetTime: number = 0;
+        rhythm.generateSubdivision(Random.fromArray([5, 6, 7, 8, 9, 11, 13]));
+        const drumLoop: Drums[] = generateDrumLoop();
+        for (const drum of drumLoop) {
+            scheduleDrum(startingTime + offsetTime, drum);
+            offsetTime += beatLength;
+        }
+        window.setTimeout(() => {
+            queueNextMeasures(startingTime + offsetTime, startingChord);
+        }, (startingTime + offsetTime - context.currentTime - 0.2) * 1000);
+    }
+
+    export function initialize(): void {
+        masterGain.gain.value = 0.25;
+        masterGain.connect(context.destination);
+        queueNextMeasures(context.currentTime, new Chord(60, ChordQualities.MINOR7));
+    }
+
+    export function setVolume(volume: number): void {
+        masterGain.gain.value = volume;
+    }
+
+    // shift note through the octaves until it ends up between min and max
+    function constrainNote(note: number, min: number, max: number): number {
         while (note < min) {
             note += 12;
         }
@@ -112,19 +101,14 @@ export default class MusicManager {
         return note;
     }
 
-    //shift notes through octaves so they end up between min and max inclusive
-    private static constrainNotes(notes: number[], min: number, max: number): number[] {
-        return notes.map(note => this.constrainNote(note, min, max));
+    // shift notes through octaves so they end up between min and max inclusive
+    function constrainNotes(notes: number[], min: number, max: number): number[] {
+        return notes.map(note => constrainNote(note, min, max));
     }
 
-    private static scheduleNote(note: Note, inst: Instrument): void {
-        const instOut: AudioNode = inst.scheduleNote(this.context, note);
-        instOut.connect(this.masterGain);
-    }
-
-    private static scheduleDrum(start: number, drum: Drums): void {
-        const drumOut: AudioNode = this.drumkit.scheduleHit(this.context, start, drum);
-        drumOut.connect(this.masterGain);
+    function scheduleNote(note: Note, inst: Instrument): void {
+        const instOut: AudioNode = inst.scheduleNote(context, note);
+        instOut.connect(masterGain);
     }
 
 }

@@ -1,33 +1,33 @@
 export interface Note {
 
-    note: number, //the MIDI number of the note
-    start: number, //starting time in seconds
-    duration: number, //duration in seconds
-    endNote?: number, //MIDI number of note to end on. if undefined, this has no effect
+    note: number; // the MIDI number of the note
+    start: number; // starting time in seconds
+    duration: number; // duration in seconds
+    endNote?: number; // MIDI number of note to end on. if undefined, this has no effect
 
 }
 
-export class Notes {
+export namespace Notes {
 
-    static readonly noteNames: string[] = ['C', 'C#', 'D', 'D#', 'E', 'F',
-        'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    export const noteNames: string[] = ["C", "C#", "D", "D#", "E", "F",
+        "F#", "G", "G#", "A", "A#", "B"];
 
-    static midiNumberToFrequency(note: number): number {
+    export function midiNumberToFrequency(note: number): number {
         return Math.pow(2, (note - 69) / 12) * 440;
     }
 
-    static midiNumberToNoteName(note: number): string {
+    export function midiNumberToNoteName(note: number): string {
         while (note < 0) {
             note += 12;
         }
-        return this.noteNames[note % 12];
+        return noteNames[note % 12];
     }
 
-    static detuneWithCoeff(note: number, detuneCoeff: number): number[] {
+    export function detuneWithCoeff(note: number, detuneCoeff: number): number[] {
         if (detuneCoeff === 1) {
-            return [this.midiNumberToFrequency(note)];
+            return [midiNumberToFrequency(note)];
         } else {
-            const freq: number = this.midiNumberToFrequency(note);
+            const freq: number = midiNumberToFrequency(note);
             return [freq / detuneCoeff, freq, freq * detuneCoeff];
         }
     }

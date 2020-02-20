@@ -1,4 +1,4 @@
-import { Random } from '../util/Random.js';
+import { Random } from "../util/Random.js";
 
 export default class Rhythm {
 

@@ -1,5 +1,5 @@
-import { Notes } from './Notes.js';
-import { Random } from '../util/Random.js';
+import { Notes } from "./Notes.js";
+import { Random } from "../util/Random.js";
 
 export enum ChordQualities {
     MAJOR = "major",
@@ -17,8 +17,8 @@ export enum ChordQualities {
     DOM7SUS4 = "dom7sus4"
 }
 
-//Chord intervals are in ascending order of semitones away from the root.
-//For example: C major = [C + 0 semitones, C + 4 semitones, C + 7 semitones] = [C, E, G].
+// Chord intervals are in ascending order of semitones away from the root.
+// For example: C major = [C + 0 semitones, C + 4 semitones, C + 7 semitones] = [C, E, G].
 export const ChordIntervals: Record<ChordQualities, number[]> = {
     "major": [0, 4, 7],
     "minor": [0, 3, 7],
@@ -33,7 +33,7 @@ export const ChordIntervals: Record<ChordQualities, number[]> = {
     "m7b5": [0, 3, 6, 10],
     "dim7": [0, 3, 6, 9],
     "dom7sus4": [0, 5, 7, 9]
-}
+};
 
 export class Chord {
 
@@ -67,10 +67,10 @@ export class ChordMotion {
         this.sourceChords = sources;
         this.distances = distances;
         this.destinationChords = dests;
-    };
+    }
 
     canStartOn(chord: Chord): boolean {
-        return this.sourceChords.indexOf(chord.quality) !== -1;
+        return this.sourceChords.includes(chord.quality);
     }
 
     nextFrom(chord: Chord): Chord {

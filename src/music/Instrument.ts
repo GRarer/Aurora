@@ -1,4 +1,4 @@
-import { Note } from './Notes.js';
+import { Note } from "./Notes.js";
 
 export default abstract class Instrument {
 
