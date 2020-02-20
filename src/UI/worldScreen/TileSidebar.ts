@@ -88,14 +88,16 @@ export default class TileSidebar implements Page {
         if (project.costs.length == 0) {
             projectHTML.appendChild(UI.makePara("Cost: Free"));
         } else {
-            const costParas = project.costs.map((cost: Cost) => UI.makePara(cost.toString(),
-                [
-                    this.run.inventory.canAfford([cost])
-                    ? "project-requirement-met"
-                    : "project-requirement-unmet"
-                ])
+            const inventoryClone = this.run.inventory.clone();
+            const costParas = project.costs.map((cost: Cost) => {
+                const affordable = inventoryClone.canAfford([cost]);
+                const para = UI.makePara(cost.toString(),
+                    [affordable ? "project-requirement-met" : "project-requirement-unmet"]);
+                if (affordable) inventoryClone.payCost([cost]);
+                return para;
+                }
             );
-            const costsDiv = UI.makeDivContaining([...costParas]);
+            const costsDiv = UI.makeDivContaining([UI.makePara("Costs: "), ...costParas]);
             
             projectHTML.appendChild(costsDiv);
         }
