@@ -88,10 +88,6 @@ export default class TileSidebar implements Page {
         if (project.costs.length == 0) {
             projectHTML.appendChild(UI.makePara("Cost: Free"));
         } else {
-            // const cssClass = this.run.inventory.canAfford(project.costs) ? "project-requirement-met" : "project-requirement-unmet";
-            // const costDescriptions = project.costs.map((cost: Cost) => `${cost.toString()}`);
-            // const costsString = "Cost: " + costDescriptions.join(", ");
-            
             const costParas = project.costs.map((cost: Cost) => UI.makePara(cost.toString(),
                 [
                     this.run.inventory.canAfford([cost])
