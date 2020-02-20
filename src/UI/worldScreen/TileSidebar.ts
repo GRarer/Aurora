@@ -93,12 +93,12 @@ export default class TileSidebar implements Page {
                 const affordable = inventoryClone.canAfford([cost]);
                 const para = UI.makePara(cost.toString(),
                     [affordable ? "project-requirement-met" : "project-requirement-unmet"]);
-                if (affordable) inventoryClone.payCost([cost]);
-                return para;
+                if (affordable) {
+                    inventoryClone.payCost([cost]);
                 }
-            );
+                return para;
+            });
             const costsDiv = UI.makeDivContaining([UI.makePara("Costs: "), ...costParas]);
-            
             projectHTML.appendChild(costsDiv);
         }
 
