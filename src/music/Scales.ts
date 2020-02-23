@@ -2,13 +2,13 @@ import { mod } from "../util/Util.js";
 
 export type Scale = number; // scales are encoded with numbers in Ian Ring's format
 
-export namespace ScaleUtils {
+export namespace Scales {
 
-    export function createScaleFromIntervals(intervals: number[]): Scale {
-        if (!intervals.includes(0)) {
+    export function createScaleFromPitchClass(pitches: number[]): Scale {
+        if (!pitches.includes(0)) {
             throw new Error("scales must have a root");
         }
-        return intervals.map(interval => 1 << mod(interval, 12)) // mod by 12 to fit into octave
+        return pitches.map(pitch => 1 << mod(pitch, 12)) // mod by 12 to fit into octave
             .filter((val, i, arr) => arr.indexOf(val) === i) // remove duplicates
             .reduce((acc, curr) => acc | curr); // combine into final bit vector
     }
@@ -54,7 +54,7 @@ export namespace ScaleUtils {
 
     // count the instances of a particular interval in a scale
     // useful for counting tritonia / hemitonia / etc.
-    export function countIntervals(scale: Scale, semitones: number): number {
+    export function countInterval(scale: Scale, semitones: number): number {
         semitones = mod(semitones, 12);
         const count: number = getModes(scale) // starting from each note in the scale...
             .filter(mode => hasInterval(mode, semitones)).length; // count all the notes with a note N semitones above them
