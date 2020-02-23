@@ -1,5 +1,7 @@
 import { mod } from "../util/Util.js";
 
+import { Arrays } from "../util/Arrays.js";
+
 export type Scale = number; // scales are encoded with numbers in Ian Ring's format
 
 export namespace Scales {
@@ -38,7 +40,7 @@ export namespace Scales {
     export function getModes(scale: Scale): Scale[] {
         const r: Scale[] = [];
         let curr: Scale = scale;
-        while (curr !== scale) { // once we return to the original scale we're done
+        while (curr !== scale || r.length === 0) { // once we return to the original scale we're done
             if (curr & 1) { // only add proper scales - i.e., ones with roots
                 r.push(curr);
             }
@@ -62,6 +64,22 @@ export namespace Scales {
             return count / 2;
         }
         return count;
+    }
+
+    let _scales: Scale[] = [];
+
+    export function scales(): Scale[] {
+        if (_scales.length === 0) {
+            _scales = Arrays.flatten([
+                getModes(2741), // major
+                getModes(2475), // neapolitan minor
+                getModes(1367), // leading whole-tone inverse
+                getModes(2477), // harmonic minor
+                getModes(2485), // harmonic major
+                getModes(2733), // melodic minor
+            ]);
+        }
+        return _scales;
     }
 
 }
