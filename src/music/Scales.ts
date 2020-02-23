@@ -21,7 +21,7 @@ export namespace Scales {
         const r: number[] = [];
         let i = 0;
         while (scale > 0) {
-            if (scale % 1 === 0) {
+            if (scale & 1) {
                 r.push(i);
             }
             scale = scale >> 1;
@@ -66,6 +66,16 @@ export namespace Scales {
         return count;
     }
 
+    // count how many notes in the scale lack a perfect fifth above them
+    export function getImperfections(scale: Scale): number {
+        return getModes(scale).filter(mode => !hasInterval(mode, 7)).length;
+    }
+
+    export function containsChord(scale: Scale, chord: number[]): boolean {
+        const chordScale = createScaleFromPitchClass(chord);
+        return (scale & chordScale) === chordScale;
+    }
+
     let _scales: Scale[] = [];
 
     export function scales(): Scale[] {
@@ -77,6 +87,7 @@ export namespace Scales {
                 getModes(2477), // harmonic minor
                 getModes(2485), // harmonic major
                 getModes(2733), // melodic minor
+                getModes(2669), // Jeths' mode
             ]);
         }
         return _scales;
