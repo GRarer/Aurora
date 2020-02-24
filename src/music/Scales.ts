@@ -71,9 +71,12 @@ export namespace Scales {
         return getModes(scale).filter(mode => !hasInterval(mode, 7)).length;
     }
 
+    export function containsScale(parent: Scale, child: Scale): boolean {
+        return (parent & child) === child;
+    }
+
     export function containsChord(scale: Scale, chord: number[]): boolean {
-        const chordScale = createScaleFromPitchClass(chord);
-        return (scale & chordScale) === chordScale;
+        return containsScale(scale, createScaleFromPitchClass(chord));
     }
 
     let _scales: Scale[] = [];
@@ -88,6 +91,7 @@ export namespace Scales {
                 getModes(2485), // harmonic major
                 getModes(2733), // melodic minor
                 getModes(2669), // Jeths' mode
+                getModes(2483), // double harmonic major
             ]);
         }
         return _scales;
