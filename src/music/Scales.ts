@@ -97,4 +97,35 @@ export namespace Scales {
         return _scales;
     }
 
+    export interface ScaleQuery {
+        imperfections?: [number, number]; // allowed range for number of imperfections
+        hemitones?: [number, number]; // allowed range for number of hemitones
+        chord?: Scale; // chord that the scale must contain
+    }
+
+    // TODO: this can be made more efficient by caching modes.
+    // see if that's worthwhile.
+    export function matchesQuery(scale: Scale, query: ScaleQuery): boolean {
+        if (query.imperfections) {
+            const imperfections = getImperfections(scale);
+            if (imperfections < query.imperfections[0] || imperfections > query.imperfections[1]) {
+                return false;
+            }
+        }
+        if (query.hemitones) {
+            const hemitones = countInterval(scale, 1);
+            if (hemitones < query.hemitones[0] || hemitones > query.hemitones[1]) {
+                return false;
+            }
+        }
+        if (query.chord && !containsScale(scale, query.chord)) {
+            return false;
+        }
+        return true;
+    }
+
+    export function getAllScalesMatchingQuery(query: ScaleQuery): Scale[] {
+        return scales().filter(scale => matchesQuery(scale, query));
+    }
+
 }
