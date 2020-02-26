@@ -30,6 +30,10 @@ export namespace Scales {
         return r;
     }
 
+    export function getNumberOfNotes(scale: Scale): number {
+        return getPitchClass(scale).length;
+    }
+
     // Rotate a scale left if amount is positive and right if amount is negative
     export function rotateScale(scale: Scale, amount: number = 1): Scale { // courtesy of nprindle
         amount = mod(amount, 12); // ensure we only rotate as much as we need to
@@ -101,11 +105,18 @@ export namespace Scales {
         imperfections?: [number, number]; // allowed range for number of imperfections
         hemitones?: [number, number]; // allowed range for number of hemitones
         chord?: Scale; // chord that the scale must contain
+        notes?: [number, number]; // allowed range for number of notes in the scale
     }
 
     // TODO: this can be made more efficient by caching modes.
     // see if that's worthwhile.
     export function matchesQuery(scale: Scale, query: ScaleQuery): boolean {
+        if (query.notes) {
+            const notes = getNumberOfNotes(scale);
+            if (notes < query.notes[0] || notes > query.notes[1]) {
+                return false;
+            }
+        }
         if (query.imperfections) {
             const imperfections = getImperfections(scale);
             if (imperfections < query.imperfections[0] || imperfections > query.imperfections[1]) {
