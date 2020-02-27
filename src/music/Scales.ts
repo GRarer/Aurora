@@ -141,7 +141,7 @@ export namespace Scales {
 
     // index into a pitch class, shifting up/down through octaves (ie, -1 is the last element of the class, but an octave down)
     export function indexIntoPitchClass(pitches: number[], index: number): number {
-        return pitches[mod(index, 12)] + Math.floor(index / 12);
+        return pitches[mod(index, 12)] + 12 * Math.floor(index / 12);
     }
 
 }
