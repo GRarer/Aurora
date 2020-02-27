@@ -15,6 +15,22 @@ export default class Rhythm {
         return this._beats;
     }
 
+    // combine subdivisions at random
+    generateTies(): number[] {
+        let i: number = 0;
+        const r: number[] = [];
+        while (i < this.subdivision.length) {
+            if (i < this.subdivision.length - 1 && Random.bool(0.5)) {
+                r.push(this.subdivision[i] + this.subdivision[i + 1]);
+                i += 2;
+            } else {
+                r.push(this.subdivision[i]);
+                i++;
+            }
+        }
+        return r;
+    }
+
     generateSubdivision(beats: number): void {
         this._beats = beats;
         this.subdivision = [];
