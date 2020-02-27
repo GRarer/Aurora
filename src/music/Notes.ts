@@ -1,3 +1,5 @@
+import { mod } from "../util/Util.js";
+
 export interface Note {
 
     note: number; // the MIDI number of the note
@@ -17,10 +19,7 @@ export namespace Notes {
     }
 
     export function midiNumberToNoteName(note: number): string {
-        while (note < 0) {
-            note += 12;
-        }
-        return noteNames[note % 12];
+        return noteNames[mod(note, 12)];
     }
 
     export function detuneWithCoeff(note: number, detuneCoeff: number): number[] {
