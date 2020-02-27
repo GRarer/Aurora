@@ -3,6 +3,7 @@ import { Note } from "./Notes.js";
 import Instrument from "./Instrument.js";
 import { AdsrOscillatorInstrument } from "./Instruments.js";
 import { Random } from "../util/Random.js";
+import { Scales, Scale } from "./Scales.js";
 import Rhythm from "./Rhythm.js";
 import { Drumkit, Drums } from "./Drums.js";
 
@@ -36,10 +37,47 @@ export namespace MusicManager {
     export const rhythm: Rhythm = new Rhythm();
     export const drumkit: Drumkit = new Drumkit();
 
+    enum ChordFunction {
+        TONIC = "tonic",
+        SUBDOMINANT = "subdominant",
+        DOMINANT = "dominant",
+        AMBIGUOUS = "ambiguous"
+    }
+
+    const backHalves: ChordFunction[][] = [
+        [ChordFunction.TONIC, ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT],
+        [ChordFunction.SUBDOMINANT, ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT],
+        [ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT, ChordFunction.DOMINANT],
+        [ChordFunction.AMBIGUOUS, ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT],
+        [ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT, ChordFunction.AMBIGUOUS]
+    ];
+
+    const FunctionDegrees: Record<ChordFunction, number[]> = {
+        "tonic": [0, 5], // I and VI
+        "subdominant": [1, 3], // II and IV
+        "dominant": [4, 6], // V and VII
+        "ambiguous": [2] // III
+    };
+
+    function generateChordProgression(scale: Scale, root: number, extensions: number = 4): number[][] {
+        const pitchClass: number[] = Scales.getPitchClass(scale);
+        const backHalf: ChordFunction[] = Random.fromArray(backHalves);
+        // always start from the tonic and add a valid back half
+        // this way it'll always fit the tonic -> subdominant -> dominant pattern
+        const chordDegrees: number[] = [0].concat(backHalf.map(f => Random.fromArray(FunctionDegrees[f])));
+        return chordDegrees.map(degree => {
+            const chord = [];
+            for (let i = 0; i < extensions; i++) {
+                // step up scale in thirds starting from chord's root
+                chord[i] = Scales.indexIntoPitchClass(pitchClass, degree + 2 * i);
+            }
+            return chord;
+        });
+    }
+
     function generateDrumLoop(): Drums[] {
         const drumLoop: Drums[] = [];
         const subdivision: number[] = rhythm.subdivision;
-        console.log(rhythm.beats, subdivision);
         let onKick: boolean = true;
         for (let i = 0; i < subdivision.length; i++) {
             let acc: number = subdivision[i] - 1;
