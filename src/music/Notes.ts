@@ -19,7 +19,7 @@ export namespace Notes {
     }
 
     export function midiNumberToNoteName(note: number): string {
-        return noteNames[mod(note, 12)];
+        return `${noteNames[mod(note, 12)]}${Math.floor(note / 12) - 1}`;
     }
 
     export function detuneWithCoeff(note: number, detuneCoeff: number): number[] {
