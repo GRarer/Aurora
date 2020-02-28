@@ -1,5 +1,5 @@
 import { Chord, ChordQualities, ChordMotion } from "./Chords.js";
-import { Note } from "./Notes.js";
+import { Note, Notes } from "./Notes.js";
 import Instrument from "./Instrument.js";
 import { AdsrOscillatorInstrument } from "./Instruments.js";
 import { Random } from "../util/Random.js";
@@ -69,7 +69,7 @@ export namespace MusicManager {
             const chord = [];
             for (let i = 0; i < extensions; i++) {
                 // step up scale in thirds starting from chord's root
-                chord[i] = Scales.indexIntoPitchClass(pitchClass, degree + 2 * i);
+                chord[i] = Scales.indexIntoPitchClass(pitchClass, degree + 2 * i) + root;
             }
             return chord;
         });
@@ -104,14 +104,32 @@ export namespace MusicManager {
         drumOut.connect(masterGain);
     }
 
+    function scheduleNote(note: Note, inst: Instrument): void {
+        const instOut: AudioNode = inst.scheduleNote(context, note);
+        instOut.connect(masterGain);
+    }
+
+    function logChords(progression: number[][]): void {
+        console.log(
+            progression.map(chord => chord.map(note => Notes.midiNumberToNoteName(note)).join(" "))
+        );
+    }
+
     function queueNextMeasures(startingTime: number, startingChord: Chord): void {
         const beatLength: number = 60 / beatsPerMinute;
         let offsetTime: number = 0;
         rhythm.generateSubdivision(Random.fromArray([5, 6, 7, 8, 9, 11, 13]));
         const drumLoop: Drums[] = generateDrumLoop();
-        for (const drum of drumLoop) {
-            scheduleDrum(startingTime + offsetTime, drum);
-            offsetTime += beatLength;
+        const progression: number[][] = generateChordProgression(2741, 60);
+        logChords(progression);
+        for (let i = 0; i < 4; i++) {
+            for (const note of progression[i]) {
+                scheduleNote({ note: note, start: startingTime + offsetTime, duration: beatLength * 4 }, instruments.pad);
+            }
+            for (const drum of drumLoop) {
+                scheduleDrum(startingTime + offsetTime, drum);
+                offsetTime += beatLength;
+            }
         }
         window.setTimeout(() => {
             queueNextMeasures(startingTime + offsetTime, startingChord);
@@ -142,11 +160,6 @@ export namespace MusicManager {
     // shift notes through octaves so they end up between min and max inclusive
     function constrainNotes(notes: number[], min: number, max: number): number[] {
         return notes.map(note => constrainNote(note, min, max));
-    }
-
-    function scheduleNote(note: Note, inst: Instrument): void {
-        const instOut: AudioNode = inst.scheduleNote(context, note);
-        instOut.connect(masterGain);
     }
 
 }
