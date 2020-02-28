@@ -146,9 +146,12 @@ export namespace MusicManager {
         const beatLength: number = 60 / beatsPerMinute;
         let offsetTime: number = 0;
         state.rhythm.generateSubdivision(Random.fromArray([5, 6, 7, 8, 9, 11, 13]));
+        state.scale = Random.fromArray(Scales.getAllScalesMatchingQuery({
+            chord: 1 << 7,
+            imperfections: [1, 1]
+        }));
         const drumLoop: Drums[] = generateDrumLoop();
         const progression: number[][] = generateChordProgression(state.scale, state.root);
-        logChords(progression);
         for (let i = 0; i < 4; i++) {
             for (const note of progression[i]) {
                 scheduleNote({
