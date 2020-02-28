@@ -29,13 +29,24 @@ export namespace MusicManager {
         ),
         pad: new AdsrOscillatorInstrument(
             { type: "triangle", detune: 4 },
-            { attack: 1.0, decay: 1.0, sustain: 0.5, release: 0.5 }
+            { attack: 1.0, decay: 0.1, sustain: 0.5, release: 0.5 }
         )
     };
 
     export const masterGain: GainNode = context.createGain();
-    export const rhythm: Rhythm = new Rhythm();
     export const drumkit: Drumkit = new Drumkit();
+
+    interface MusicState {
+        rhythm: Rhythm;
+        root: number;
+        scale: Scale;
+    }
+
+    const state: MusicState = {
+        rhythm: new Rhythm(),
+        root: 60, // middle C
+        scale: 2741 // major
+    };
 
     enum ChordFunction {
         TONIC = "tonic",
@@ -77,7 +88,7 @@ export namespace MusicManager {
 
     function generateDrumLoop(): Drums[] {
         const drumLoop: Drums[] = [];
-        const subdivision: number[] = rhythm.subdivision;
+        const subdivision: number[] = state.rhythm.subdivision;
         let onKick: boolean = true;
         for (let i = 0; i < subdivision.length; i++) {
             let acc: number = subdivision[i] - 1;
@@ -109,6 +120,22 @@ export namespace MusicManager {
         instOut.connect(masterGain);
     }
 
+    // shift note through the octaves until it ends up between min and max
+    function constrainNote(note: number, min: number, max: number): number {
+        while (note < min) {
+            note += 12;
+        }
+        while (note > max) {
+            note -= 12;
+        }
+        return note;
+    }
+
+    // shift notes through octaves so they end up between min and max inclusive
+    function constrainNotes(notes: number[], min: number, max: number): number[] {
+        return notes.map(note => constrainNote(note, min, max));
+    }
+
     function logChords(progression: number[][]): void {
         console.log(
             progression.map(chord => chord.map(note => Notes.midiNumberToNoteName(note)).join(" "))
@@ -118,13 +145,17 @@ export namespace MusicManager {
     function queueNextMeasures(startingTime: number, startingChord: Chord): void {
         const beatLength: number = 60 / beatsPerMinute;
         let offsetTime: number = 0;
-        rhythm.generateSubdivision(Random.fromArray([5, 6, 7, 8, 9, 11, 13]));
+        state.rhythm.generateSubdivision(Random.fromArray([5, 6, 7, 8, 9, 11, 13]));
         const drumLoop: Drums[] = generateDrumLoop();
-        const progression: number[][] = generateChordProgression(2741, 60);
+        const progression: number[][] = generateChordProgression(state.scale, state.root);
         logChords(progression);
         for (let i = 0; i < 4; i++) {
             for (const note of progression[i]) {
-                scheduleNote({ note: note, start: startingTime + offsetTime, duration: beatLength * 4 }, instruments.pad);
+                scheduleNote({
+                    note: constrainNote(note, state.root, state.root + 12),
+                    start: startingTime + offsetTime,
+                    duration: beatLength * state.rhythm.beats
+                }, instruments.pad);
             }
             for (const drum of drumLoop) {
                 scheduleDrum(startingTime + offsetTime, drum);
@@ -144,22 +175,6 @@ export namespace MusicManager {
 
     export function setVolume(volume: number): void {
         masterGain.gain.value = volume;
-    }
-
-    // shift note through the octaves until it ends up between min and max
-    function constrainNote(note: number, min: number, max: number): number {
-        while (note < min) {
-            note += 12;
-        }
-        while (note > max) {
-            note -= 12;
-        }
-        return note;
-    }
-
-    // shift notes through octaves so they end up between min and max inclusive
-    function constrainNotes(notes: number[], min: number, max: number): number[] {
-        return notes.map(note => constrainNote(note, min, max));
     }
 
 }
