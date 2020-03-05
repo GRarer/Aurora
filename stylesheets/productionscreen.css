@@ -1,17 +1,56 @@
 .production-screen {
     padding-left: 10pt;
+    font-size: 16pt;
+    margin: 0pt;
+}
+
+.production-screen h1 {
+    margin-block-end: 0;
+    margin-block-start: 0;
 }
 
 .production-screen-label {
-    font-size: 20pt;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.25em;
+}
+
+.production-screen-available-workers {
+    margin-block-start: 0.25em;
+    margin-block-end: 0.25em;
 }
 
 .production-screen-inventory {
-    font-size: 16pt;
-    line-height: 0;
-    padding: 1pt;
     outline: solid white;
-    width: 50%;
+    width: min(100%, max(50%, 7in));
+}
+
+.production-screen-inventory p {
+    font-size: 16pt;
+    line-height: 1;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 1pt;
+}
+
+.production-screen-worker-consumption-label {
+    margin-block-end: 0.25em;
+    margin-block-start: 0.25em;
+}
+
+.production-screen-worker-consumption {
+    margin-block-end: 0;
+    margin-block-start: 0;
+}
+
+.free-conversions-list {
+    margin-bottom: 16pt;
+}
+
+.conversion {
+    width: min(100%, max(50%, 7in));
+    display: flex;
+    flex-direction: row;
+
 }
 
 .conversion-description {
@@ -21,8 +60,8 @@
 }
 
 .conversion-description-box {
-    width: 50%;
     border: 2px solid white;
+    width: 100%;
 }
 
 .conversion-description-normal {
@@ -49,6 +88,8 @@
 .population-death-label {
     font-size: 16pt;
     color: tomato;
+    margin-block-end: 0;
+    margin-block-start: 0;
 }
 
 .production-screen-back-button {

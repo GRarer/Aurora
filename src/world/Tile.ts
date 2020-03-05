@@ -2,6 +2,7 @@ import GridCoordinates from "./GridCoordinates.js";
 import TileProject from "../tileProjects/TileProject.js";
 import Conversion from "../resources/Conversion.js";
 import Housing from "../resources/Housing.js";
+import World from "./World.js";
 
 /**
  * A tile is an object in the world that occupies a map square
@@ -20,7 +21,7 @@ export default abstract class Tile {
     readonly populationCapacity: Housing | undefined = undefined;
 
     // this provides a key into the ImageCache, which preloads all of the images so that we can synchronously draw them to the map canvas
-    abstract readonly texture: HTMLImageElement;
+    protected abstract readonly texture: HTMLImageElement;
 
     constructor(
         public position: GridCoordinates
@@ -28,6 +29,12 @@ export default abstract class Tile {
 
     abstract getTileName(): string; // returns the name of the tile type
     abstract getTileDescription(): string; // return the tile type's description
+
+    // by default this just returns the tile's texture, but it can be overridden to allow the texture to be changed
+    // including changing the texture based on the position of other tiles in the world (e.g. for aligning roads)
+    getTexture(world: World): HTMLImageElement {
+        return this.texture;
+    }
 
 }
 

@@ -59,3 +59,23 @@
     margin-top: 10pt;
     font-size: 20pt;
 }
+
+.settings {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings h1 {
+    font-size: 24pt;
+    margin-bottom: 10pt;
+}
+
+.settings-slider {
+    display: flex;
+    font-size: 15pt;
+    margin: 5pt;
+}
+
+.settings button {
+    margin-top: 15pt;
+}

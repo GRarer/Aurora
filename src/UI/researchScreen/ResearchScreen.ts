@@ -12,7 +12,7 @@ export default class ResearchScreen implements Page {
 
     constructor(run: Game) {
         this.run = run;
-        this.html = UI.makeDiv();
+        this.html = UI.makeDiv(["research-screen"]);
         this.refresh();
     }
 
@@ -22,9 +22,9 @@ export default class ResearchScreen implements Page {
         const possibleTechs: Technology[] = this.run.getResearchOptions();
         const researchResources: Resource[] = Resource.values().filter(resource => possibleTechs.some((tech) => tech.researchCost.resource === resource));
 
-        const researchResourcesHTML: HTMLElement = UI.makeDiv();
+        const researchResourcesHTML: HTMLElement = UI.makeDiv(["research-resources"]);
         if (researchResources.length !== 0) {
-            researchResourcesHTML.appendChild(UI.makeHeader("Available Research Resources"));
+            researchResourcesHTML.appendChild(UI.makeHeader("Available Research Data"));
             researchResources.forEach(resource => researchResourcesHTML.appendChild(
                 UI.makePara(`${resource.name}: ${this.run.inventory.getResourceQuantity(resource)}`)
             ));
@@ -36,8 +36,8 @@ export default class ResearchScreen implements Page {
             researchHeader = UI.makeDiv();
         }
 
-        let historyHeader = UI.makeHeader("Previous Research Projects");
-        const techHistory = this.run.getUnlockedTechnologies().filter(tech => tech.visible).map(tech => UI.makePara(tech.name));
+        let historyHeader = UI.makeHeader("Previous Research Projects", 1, ["previous-research-header"]);
+        const techHistory = this.run.getUnlockedTechnologies().filter(tech => tech.visible).map(tech => UI.makePara(`• ${tech.name}`, ["previous-research"]));
 
         if (techHistory.length === 0) {
             historyHeader = UI.makeDiv();
@@ -48,9 +48,9 @@ export default class ResearchScreen implements Page {
         }, []);
 
         UI.fillHTML(this.html, [
-            researchResourcesHTML,
             researchHeader,
             researchOptionsHTML,
+            researchResourcesHTML,
             historyHeader,
             ...techHistory,
             backButton,
@@ -59,10 +59,10 @@ export default class ResearchScreen implements Page {
 
     private renderTechOption(tech: Technology): HTMLElement {
         const div = UI.makeDivContaining([
-            UI.makePara(tech.name),
+            UI.makeHeader(tech.name, 2),
             UI.makePara(tech.description),
             UI.makePara(`Development cost: ${tech.researchCost}`)
-        ]);
+        ], ["tech-option"]);
         let unmetPrereqs: number = 0;
         for (const prereq of tech.requiredTechs) {
             if (!this.run.hasUnlockedTechnology(prereq)) {
@@ -74,6 +74,7 @@ export default class ResearchScreen implements Page {
         const unlockCallback: () => void = () => {
             this.run.unlockTechnology(tech);
             this.refresh();
+            this.run.updateQuestState();
         };
         div.appendChild(UI.makeButton("Conduct Research", unlockCallback, [], canUnlock ? "enabled" : "disabled"));
 

@@ -6,11 +6,12 @@ import GridCoordinates from "../../world/GridCoordinates.js";
 import WorldScreen from "./WorldScreen.js";
 import { HighlightSelectionImage } from "../Images.js";
 import { Page } from "../GameWindow.js";
+import { Settings } from "../../persistence/Settings.js";
 
 // class to manage the UI canvas that shows the map
 export default class MapUI implements Page {
 
-    private static readonly pixelsPerTile: number = 64;
+    private static readonly pixelsPerTile: number = 100;
 
     private static readonly highlightImage: HTMLImageElement = HighlightSelectionImage;
 
@@ -19,8 +20,8 @@ export default class MapUI implements Page {
     readonly html: HTMLCanvasElement; // the html for this component is an html canvas that we draw tiles onto
     private parentScreen: WorldScreen; // the WorldScreen instance that contains this MapUI
 
-    private viewWidth: number = 12; // width of viewable area in tiles
-    private viewHeight: number = 8; // height of viewable area in tiles
+    private viewWidth: number = Settings.currentOptions.viewWidth; // width of viewable area in tiles
+    private viewHeight: number = Settings.currentOptions.viewHeight; // height of viewable area in tiles
 
     private viewPosition: GridCoordinates = new GridCoordinates(0, 0); // coordinates of the current view area's top-left tile
     private highlightedCoordinates: GridCoordinates | null = null; // coordinates of current selected tile, null if no tile is selected
@@ -42,7 +43,11 @@ export default class MapUI implements Page {
     public refresh(): void {
         const tilesInViewableArea = this.world.getTilesInRectangle(this.viewPosition.x, this.viewPosition.y, this.viewWidth, this.viewHeight);
         for (const tile of tilesInViewableArea) {
-            this.rerenderTile(tile);
+            this.drawSquareAtCoordinates(tile.getTexture(this.world), tile.position);
+        }
+        // render the highlight reticle thing
+        if (this.highlightedCoordinates !== null) {
+            this.drawSquareAtCoordinates(MapUI.highlightImage, this.highlightedCoordinates);
         }
     }
 
@@ -57,103 +62,55 @@ export default class MapUI implements Page {
             return; // don't attempt to draw tiles outside the viewable area
         }
 
-        context.drawImage(image, x * MapUI.pixelsPerTile, y * MapUI.pixelsPerTile, MapUI.pixelsPerTile, MapUI.pixelsPerTile);
-    }
+        const ratio = MapUI.pixelsPerTile / image.width;
 
-    // redraws the given tile at that tile's position
-    private rerenderTile(tile: Tile): void {
-        this.drawSquareAtCoordinates(tile.texture, tile.position);
-        if (tile.position === this.highlightedCoordinates) {
-            this.drawSquareAtCoordinates(MapUI.highlightImage, tile.position);
-        }
+        const screenWidth = MapUI.pixelsPerTile;
+        const screenHeight = image.height * ratio; // necessary scaling for non 100xN images
+
+        const screenX = x * MapUI.pixelsPerTile;
+        const screenY = y * MapUI.pixelsPerTile - screenHeight + MapUI.pixelsPerTile; // make sure tall images line up properly
+
+        context.drawImage(image, screenX, screenY, screenWidth, screenHeight);
     }
 
     private selectTile(tile: Tile | null): void {
-        if (tile && tile.position === this.highlightedCoordinates) {
-            return; // ignore selecting a tile that is already selected
-        }
-
-        // deselect previous highlight
-        if (this.highlightedCoordinates) {
-            const prevSelection = this.world.getTileAtCoordinates(this.highlightedCoordinates);
-            this.highlightedCoordinates = null;
-            this.rerenderTile(prevSelection);
-        }
-
-        // highlight new tile
-        if (tile) {
-            this.drawSquareAtCoordinates(MapUI.highlightImage, tile.position);
-            this.highlightedCoordinates = tile.position;
-        } else {
-            this.highlightedCoordinates = null;
-        }
-
+        this.highlightedCoordinates = tile ? tile.position : null;
+        this.refresh();
         this.parentScreen.changeSidebarTile(this.highlightedCoordinates);
     }
 
     private moveViewArea(right: number, down: number): void {
-        const oldX = this.viewPosition.x;
-        const oldY = this.viewPosition.y;
-
         const newX = clamp(0, this.viewPosition.x + right, this.world.width - this.viewWidth);
         const newY = clamp(0, this.viewPosition.y + down, this.world.height - this.viewHeight);
         this.viewPosition = new GridCoordinates(newX, newY);
 
-        right = this.viewPosition.x - oldX;
-        down = this.viewPosition.y - oldY;
-
-        // move existing canvas pixels
-        const translateX = right * MapUI.pixelsPerTile * -1;
-        const translateY = down * MapUI.pixelsPerTile * -1;
-        const context = this.html.getContext("2d")!;
-        context.drawImage(this.html, translateX, translateY);
-
-        // rerender newly visible tiles
-        if (right > 0) {
-            const newTiles = this.world.getTilesInRectangle((this.viewPosition.x + this.viewWidth - right), (this.viewPosition.y), right, this.viewHeight);
-            for (const tile of newTiles) {
-                this.rerenderTile(tile);
-            }
-        }
-        if (right < 0) {
-            const newTiles = this.world.getTilesInRectangle((this.viewPosition.x), (this.viewPosition.y), right * -1, this.viewHeight);
-            for (const tile of newTiles) {
-                this.rerenderTile(tile);
-            }
-        }
-        if (down > 0) {
-            const newTiles = this.world.getTilesInRectangle((this.viewPosition.x), (this.viewPosition.y + this.viewHeight - down), this.viewWidth, down);
-            for (const tile of newTiles) {
-                this.rerenderTile(tile);
-            }
-        } if (down < 0) {
-            const newTiles = this.world.getTilesInRectangle((this.viewPosition.x), (this.viewPosition.y), this.viewWidth, down * -1);
-            for (const tile of newTiles) {
-                this.rerenderTile(tile);
-            }
-        }
+        this.refresh();
     }
 
     handleClick(ev: MouseEvent): void {
         const x = Math.floor((ev.pageX - this.html.offsetLeft) * (this.viewWidth / this.html.clientWidth)) + this.viewPosition.x;
         const y = Math.floor((ev.pageY - this.html.offsetTop) * (this.viewHeight / this.html.clientHeight)) + this.viewPosition.y;
 
-        const targetTile = this.world.getTileAtCoordinates(new GridCoordinates(x, y));
+        const targetTile = this.world.getTileAtCoordinates(new GridCoordinates(x, y))!;
         this.selectTile(targetTile);
     }
 
     handleKeyDown(ev: KeyboardEvent): void {
         const code = ev.code;
         if (code === "ArrowUp" || code === "KeyW") {
+            ev.preventDefault();
             this.moveViewArea(0, -1);
         }
         if (code === "ArrowLeft" || code === "KeyA") {
+            ev.preventDefault();
             this.moveViewArea(-1, 0);
         }
         if (code === "ArrowDown" || code === "KeyS") {
+            ev.preventDefault();
             this.moveViewArea(0, 1);
         }
         if (code === "ArrowRight" || code === "KeyD") {
+            ev.preventDefault();
             this.moveViewArea(1, 0);
         }
     }

@@ -13,6 +13,7 @@ export default class TileProject {
 
     constructor(
         readonly title: string,
+        readonly projectDescription: string,
         private action: tileAction,
         readonly costs: Cost[],
         readonly completionRequirements: (TilePredicate | WorldPredicate)[],

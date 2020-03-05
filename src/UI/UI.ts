@@ -87,6 +87,31 @@ export namespace UI {
         return b;
     }
 
+    // Creates a slider with an inclusive range and a default value, with the
+    // appropriate callback when the slider value changes
+    export function makeSlider(label: string, min: number, max: number, value: number, callback: (value: number) => void, step?: number): HTMLElement {
+        const input = document.createElement("input");
+        input.type = "range";
+        input.min = min.toString();
+        input.max = max.toString();
+        input.value = value.toString();
+        if (step !== undefined) {
+            input.step = step.toString();
+        }
+        input.oninput = function(this: GlobalEventHandlers) {
+            const handlers = this as GlobalEventHandlers & { value?: string; };
+            if (handlers.value !== undefined) {
+                const num = Number(handlers.value);
+                if (!isNaN(num) && min <= num && num <= max) {
+                    callback(num);
+                }
+            }
+        };
+        const par = UI.makePara(`${label}: `);
+        const div = UI.makeDivContaining([par, input]);
+        return div;
+    }
+
     // creates an HTML canvas for drawing graphics
     export function makeCanvas(width: number, height: number, classes?: string[]): HTMLCanvasElement {
         const canvas = document.createElement("canvas");

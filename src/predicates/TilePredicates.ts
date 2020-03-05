@@ -2,6 +2,8 @@ import TilePredicate from "./TilePredicate.js";
 import GridCoordinates from "../world/GridCoordinates.js";
 import Game from "../Game.js";
 import Tile, { NamedTileType } from "../world/Tile.js";
+import Species from "../resources/Species.js";
+import Road from "../world/Tiles/Road.js";
 
 
 
@@ -32,6 +34,9 @@ export class TileWithinDistancePredicate extends TilePredicate {
     }
 }
 
+// we use this specific requirement on a lot of tiles so we define it here for convenience
+export const adjacentToRoad: TileWithinDistancePredicate = new TileWithinDistancePredicate(1, Road);
+
 export class ConversionCountPredicate extends TilePredicate {
     constructor(
         private requiredCount: number
@@ -40,9 +45,32 @@ export class ConversionCountPredicate extends TilePredicate {
     }
 
     evaluate(run: Game, position: GridCoordinates): boolean {
-        return (run.world.getTileAtCoordinates(position).resourceConversions.length === this.requiredCount);
+        const tile = run.world.getTileAtCoordinates(position);
+        if (tile) {
+            return (tile.resourceConversions.length === this.requiredCount);
+        } else {
+            return false;
+        }
+
     }
     toString(): string {
         return `${this.requiredCount} resource conversions on this tile`;
+    }
+}
+
+
+export class SpeciesPopulationPredicate extends TilePredicate {
+    constructor(
+        private species: Species,
+        private minCount: number,
+    ) {
+        super();
+    }
+
+    evaluate(run: Game, position: GridCoordinates): boolean {
+        return (run.inventory.getPopulation(this.species) >= this.minCount);
+    }
+    toString(): string {
+        return `have at least ${this.minCount} ${this.species.name}`;
     }
 }

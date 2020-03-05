@@ -1,6 +1,7 @@
 import { UI } from "../UI.js";
 import { GameWindow, Page } from "../GameWindow.js";
 import CreditsScreen from "./CreditsScreen.js";
+import SettingsScreen from "./SettingsScreen.js";
 import { enableCheats } from "../../util/Cheats.js";
 import WorldScreen from "../worldScreen/WorldScreen.js";
 import Game from "../../Game.js";
@@ -26,6 +27,7 @@ export default class MainMenu implements Page {
                     GameWindow.show(new WorldScreen(newGame));
                 }),
                 UI.makeButton("display_credits", () => GameWindow.show(new CreditsScreen())),
+                UI.makeButton("settings", () => GameWindow.show(new SettingsScreen())),
             ], ["main-menu-options"]),
         ]);
     }

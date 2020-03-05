@@ -4,20 +4,27 @@ import Wasteland from "./Tiles/Wasteland.js";
 import Mountain from "./Tiles/Mountain.js";
 import { Random } from "../util/Random.js";
 import GridCoordinates from "./GridCoordinates.js";
-import WorldGenerationParameters from "./WorldGenerationParameters.js";
 import Species from "../resources/Species.js";
+import Ruins from "./Tiles/Ruins.js";
+import { WorldGenerationParameters } from "./WorldGenerationParameters.js";
 
 export default class World {
 
     width: number;
     height: number;
 
+    /* this is used to track the past texture of a given tile type at a given position
+     * this lets tiles that have different random textures keep the same texture over the course of the run
+     * even if the individual tile is replaced with another of the same type
+     */
+    private pastTextureMap: Map<string, HTMLImageElement> = new Map();
+
     // world grid is indexed grid[row][column]
     grid: Tile[][];
 
-    constructor(params: WorldGenerationParameters) {
-        this.width = params.worldWidth;
-        this.height = params.worldHeight;
+    constructor() {
+        this.width = WorldGenerationParameters.width;
+        this.height = WorldGenerationParameters.height;
 
         // generate empty map
         this.grid = new Array(this.height);
@@ -29,15 +36,27 @@ export default class World {
         }
 
         // place random mountains
-        const mountainNumber = Random.intBetween(params.minMountains, params.maxMountains);
+        const mountainNumber = Random.intBetween(...WorldGenerationParameters.mountainRange);
         for (let i = 0; i < mountainNumber; i++) {
             const wastelandTiles = this.getTiles().filter((tile: Tile) => (tile instanceof Wasteland));
-            const position = Random.fromArray(wastelandTiles).position;
-            this.placeTile(new Mountain(position));
+            if (Arrays.isNonEmpty(wastelandTiles)) {
+                const position = Random.fromArray(wastelandTiles).position;
+                this.placeTile(new Mountain(position));
+            }
+        }
+
+        // place random alien ruins
+        const ruinsNumber = Random.intBetween(...WorldGenerationParameters.ruinRange);
+        for (let i = 0; i < ruinsNumber; i++) {
+            const wastelandTiles = this.getTiles().filter((tile: Tile) => (tile instanceof Wasteland));
+            if (Arrays.isNonEmpty(wastelandTiles)) {
+                const position = Random.fromArray(wastelandTiles).position;
+                this.placeTile(new Ruins(position));
+            }
         }
 
         // place the tiles specified in the parameters
-        for (const tile of params.nonrandomTiles) {
+        for (const tile of WorldGenerationParameters.nonrandomTiles()) {
             this.placeTile(tile);
         }
     }
@@ -72,7 +91,10 @@ export default class World {
         return tiles;
     }
 
-    getTileAtCoordinates(coordinates: GridCoordinates): Tile {
+    getTileAtCoordinates(coordinates: GridCoordinates): Tile | undefined {
+        if (coordinates.x < 0 || coordinates.x >= this.width || coordinates.y < 0 || coordinates.y >= this.height) {
+            return undefined;
+        }
         return this.grid[coordinates.y][coordinates.x];
     }
 
@@ -90,5 +112,15 @@ export default class World {
         }
 
         return capacity;
+    }
+
+    getPastTexture(tileType: typeof Tile & { name: string; }, position: GridCoordinates): HTMLImageElement | undefined {
+        const key: string = `${[tileType.name, position]}`;
+        return this.pastTextureMap.get(key);
+    }
+
+    storePastTexture(tileType: typeof Tile & { name: string; }, position: GridCoordinates, texture: HTMLImageElement): void {
+        const key: string = `${[tileType.name, position]}`;
+        this.pastTextureMap.set(key, texture);
     }
 }

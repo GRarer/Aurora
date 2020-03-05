@@ -36,10 +36,26 @@
 .world-screen-sidebar {
     background-color: black;
     width: 20%;
-    padding: 20px;
+    padding: 10px;
     font-size: 16px;
     overflow-y: auto;
     height: calc(100vh - 125px);
+}
+
+.tile-project {
+    border: solid white;
+    margin-top: 5pt;
+}
+
+.tile-project button {
+    width: 100%;
+
+}
+
+.tile-project p {
+    margin-left: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 .project-requirement-met {

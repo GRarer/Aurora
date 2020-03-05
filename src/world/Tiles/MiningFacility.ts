@@ -11,7 +11,7 @@ import { IndustrialEngineeringTech } from "../../techtree/TechTree.js";
 import { ConversionCountPredicate } from "../../predicates/TilePredicates.js";
 
 export default class MiningFacility extends Tile {
-    texture: HTMLImageElement = MiningFacilityTexture;
+    protected texture: HTMLImageElement = MiningFacilityTexture;
 
     constructor(position: GridCoordinates) {
         super(position);
@@ -32,10 +32,10 @@ export default class MiningFacility extends Tile {
 
     possibleProjects = [
         new TileProject(
-            "Double Production Lines",
+            "Double Production Lines", "Add a second production line to increase resource throughput in this facility",
             (position: GridCoordinates, run: Game) => {
                 // find this tile
-                const thisTile = run.world.getTileAtCoordinates(position);
+                const thisTile = run.world.getTileAtCoordinates(position)!;
                 // duplicate the same conversions that a newly build instance has
                 for (const conversion of new MiningFacility(new GridCoordinates(0, 0)).resourceConversions) {
                     thisTile.resourceConversions.push(conversion);
@@ -54,7 +54,7 @@ export default class MiningFacility extends Tile {
     ];
 
     static readonly tileName: string = "Ore Processing Center";
-    static readonly tileDescription: string = "A facility used to process ore obtained from mining into useful materials.";
+    static readonly tileDescription: string = "A facility used to process ore into useful materials";
     getTileName(): string {
         return MiningFacility.tileName;
     }

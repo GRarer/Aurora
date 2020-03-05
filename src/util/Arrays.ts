@@ -2,6 +2,11 @@
 export type NonEmptyArray<T> = [T, ...T[]];
 
 export namespace Arrays {
+    // Type predicate to assert that a 'T[]' is a 'NonEmptyArray<T>'
+    export function isNonEmpty<T>(arr: T[]): arr is NonEmptyArray<T> {
+        return arr.length > 0;
+    }
+
     // creates a list of the desired length, filling it with values produced by the given function
     export function generate<T>(length: number, func: () => T): T[] {
         const result: T[] = new Array(length);
@@ -29,5 +34,14 @@ export namespace Arrays {
             }
         }
         return { yes, no };
+    }
+
+    // create an array containing the same item repeated
+    export function repeat<T>(item: T, count: number): T[] {
+        const array = new Array(count);
+        for (let i = 0; i < count; i++) {
+            array[i] = item;
+        }
+        return array;
     }
 }

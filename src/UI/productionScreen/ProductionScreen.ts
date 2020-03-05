@@ -28,7 +28,7 @@ export default class ProductionScreen implements Page {
         inventoryCopy.applyConversions(free);
 
         const freeConversionsHTML: HTMLElement[] = free.map(conversion => this.renderConversion(conversion, true));
-        const freeConversionsDiv = UI.makeDivContaining(freeConversionsHTML);
+        const freeConversionsDiv = UI.makeDivContaining(freeConversionsHTML, ["free-conversions-list"]);
 
         const costlyConversionsHTML: HTMLElement[] = [];
         for (const conversion of costly) {
@@ -51,6 +51,13 @@ export default class ProductionScreen implements Page {
             }
         });
 
+        const availableWorkersLabel = UI.makePara(
+            `Available workers at start of production cycle: ${this.run.inventory.getAvailableWorkers()}`,
+            ["production-screen-available-workers"]);
+        const unusedWorkersLabel = UI.makePara(
+            `Unused workers at end of production cycle: ${inventoryCopy.getAvailableWorkers()}`,
+            ["production-screen-worker-consumption-label"]);
+
         const populationConsumptionHtml = UI.makeDiv();
         if (this.run.inventory.getSpeciesList().length !== 0) {
 
@@ -58,16 +65,16 @@ export default class ProductionScreen implements Page {
             // but still be able to run the actual populationGrowth method on inventoryClone afterwards
             const consumptionInventoryCopy = inventoryCopy.clone();
 
-            populationConsumptionHtml.appendChild(UI.makeHeader("Resources required for worker upkeep:"));
+            populationConsumptionHtml.appendChild(UI.makePara("Resources required for worker upkeep:", ["production-screen-worker-consumption-label"]));
             for (const species of consumptionInventoryCopy.getSpeciesList()) {
                 const provided = consumptionInventoryCopy.getProvidedWorkerConsumption(species).quantity;
-                const required = consumptionInventoryCopy.getProvidedWorkerConsumption(species).quantity;
+                const required = consumptionInventoryCopy.getRequiredWorkerConsumption(species).quantity;
                 const resource = species.survivalCost.resource;
 
                 const consumptionDescription = `${species.name}: ${provided}/${required} ${resource.name}`;
 
                 const cssClass = (required > provided) ? "population-consumption-unmet" : "population-consumption-met";
-                populationConsumptionHtml.appendChild(UI.makePara(consumptionDescription, [cssClass]));
+                populationConsumptionHtml.appendChild(UI.makePara(consumptionDescription, [cssClass, "production-screen-worker-consumption"]));
 
                 consumptionInventoryCopy.payCost([consumptionInventoryCopy.getProvidedWorkerConsumption(species)]);
             }
@@ -85,36 +92,32 @@ export default class ProductionScreen implements Page {
         for (const species of speciesList) {
             finalPopulation.set(species, inventoryCopy.getPopulation(species));
         }
-
-        if (speciesList.some(species => (initialPopulation.get(species)! > finalPopulation.get(species)!))) {
-            workerDeathHtml.appendChild(UI.makeHeader("Predicted Population Decline:"));
-        }
-
         for (const species of speciesList) {
             const initial = initialPopulation.get(species)!;
             const final = finalPopulation.get(species)!;
             const deaths = initial - final;
 
             if (deaths > 0) {
-                workerDeathHtml.appendChild(UI.makePara(`${deaths} ${species.name} will die from lack of ${species.survivalCost.resource.name}!`, ["population-death-label"]));
+                workerDeathHtml.appendChild(
+                    UI.makePara(`${deaths} ${species.name} will die from lack of ${species.survivalCost.resource.name}!`,
+                        ["population-death-label"]));
             }
         }
 
 
-
         UI.fillHTML(this.html, [
-            UI.makePara("Resource Production Report", [`production-screen-label`]),
-            UI.makePara(`Available workers at start of next production cycle: ${this.run.inventory.getAvailableWorkers()}`, [`production-screen-label`]),
-            UI.makePara("Resources available at start of next production cycle:", [`production-screen-label`]),
+            UI.makeHeader("Resource Production Management"),
+            UI.makeHeader("Inventory at start of production cycle:", 2, ["production-screen-label"]),
             this.renderInventory(this.run.inventory),
-            UI.makePara("Resource generation in next production cycle:", [`production-screen-label`]),
+            UI.makeHeader("Resource production", 2, ["production-screen-label"]),
+            availableWorkersLabel,
             freeConversionsDiv,
-            UI.makePara("Resource conversion in next production cycle:", [`production-screen-label`]),
             costlyConversionsDiv,
-            UI.makePara(`Unused workers at end of next production cycle: ${inventoryCopy.getAvailableWorkers()}`, [`production-screen-label`]),
+            UI.makeHeader("Workforce", 2, ["production-screen-label"]),
+            unusedWorkersLabel,
             populationConsumptionHtml,
             workerDeathHtml,
-            UI.makePara("Resources available at end of next production cycle:", [`production-screen-label`]),
+            UI.makeHeader("Inventory at end of production cycle:", 2, ["production-screen-label"]),
             this.renderInventory(inventoryCopy),
             UI.makeButton("Back", () => { GameWindow.show(new WorldScreen(this.run)); }, ["production-screen-back-button"]),
         ]);
@@ -131,15 +134,15 @@ export default class ProductionScreen implements Page {
     }
 
     renderConversion(conversion: Conversion, canAfford: boolean): HTMLElement {
-        const div = UI.makeDiv(["flex-horizontal"]);
+        const div = UI.makeDiv(["conversion"]);
 
         let text = conversion.toString();
         let cssClass = "conversion-description-normal"; // css class that changes to show the conversion's status
         if (!conversion.enabled) {
-            text = `(disabled) ${conversion.toString()}`;
+            text = `${conversion.toString()} (disabled) `;
             cssClass = "conversion-description-disabled";
         } else if (!canAfford) {
-            text = `(cannot afford) ${conversion.toString()}`;
+            text = `${conversion.toString()} (cannot afford)`;
             cssClass = `conversion-description-cannot-afford`;
         }
 

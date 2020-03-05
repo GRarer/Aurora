@@ -6,7 +6,7 @@ import Resource from "../../resources/Resource.js";
 import { SolarPanelsTexture } from "../../UI/Images.js";
 
 export default class SolarPanels extends Tile {
-    texture: HTMLImageElement = SolarPanelsTexture;
+    protected texture: HTMLImageElement = SolarPanelsTexture;
 
     constructor(position: GridCoordinates) {
         super(position);
@@ -19,7 +19,7 @@ export default class SolarPanels extends Tile {
     ];
 
     static readonly tileName: string = "Photovoltaic Array";
-    static readonly tileDescription: string = "Converts light from this system's sun into electical energy. Useful for basic colony and research functions.";
+    static readonly tileDescription: string = "Converts light from this planet's sun into electrical energy";
     getTileName(): string {
         return SolarPanels.tileName;
     }

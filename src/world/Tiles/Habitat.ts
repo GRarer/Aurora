@@ -6,7 +6,7 @@ import { HabitatTexture } from "../../UI/Images.js";
 
 export default class Habitat extends Tile {
 
-    texture: HTMLImageElement = HabitatTexture;
+    protected texture: HTMLImageElement = HabitatTexture;
 
     populationCapacity: Housing = new Housing(Species.Human, 200);
 
@@ -15,7 +15,7 @@ export default class Habitat extends Tile {
     }
 
     static readonly tileName: string = "Habitat Dome";
-    static readonly tileDescription: string = "A human habitat where the human population can live when they're not pursuing mission goals.";
+    static readonly tileDescription: string = "A pressurized structure that provides housing, services, and life support for humans";
     getTileName(): string {
         return Habitat.tileName;
     }

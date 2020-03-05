@@ -2,6 +2,7 @@
 @import 'worldscreen.css';
 @import 'productionscreen.css';
 @import 'transitionscreen.css';
+@import 'researchscreen.css';
 
 :root {
     background-color: black;

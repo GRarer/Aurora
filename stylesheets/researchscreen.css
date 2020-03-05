@@ -1,0 +1,50 @@
+.tech-option {
+    outline: solid white;
+    width: min(100%, max(50%, 7in));
+    padding: 0;
+}
+
+.tech-option p {
+    font-size: 14pt;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding: 2pt;
+    padding-left: 5pt;
+    line-height: 1;
+}
+
+.tech-option h2 {
+    font-size: 1.8em;
+    padding: 5pt;
+    margin-bottom: 0em;
+}
+
+.tech-option button {
+    margin-top: 10pt;
+    margin-bottom: -2px;
+    margin-left: -2px;
+}
+
+.research-resources {
+    width: min(100%, max(50%, 7in));
+}
+
+.research-resources p {
+    font-size: 16pt;
+    line-height: 1;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 1pt;
+}
+
+.previous-research-header {
+    margin-bottom: 1pt;
+}
+
+.previous-research {
+    font-size: 16pt;
+    margin-top: 0;
+    margin-bottom: 0;
+}

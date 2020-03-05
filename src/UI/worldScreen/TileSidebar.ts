@@ -36,7 +36,7 @@ export default class TileSidebar implements Page {
                 UI.makePara(`No structure or terrain tile selected`),
             ]);
         } else {
-            const tile = this.run.world.getTileAtCoordinates(this.position);
+            const tile = this.run.world.getTileAtCoordinates(this.position)!;
 
             const descriptionHTML = UI.makeDiv();
             descriptionHTML.appendChild(UI.makePara(tile.getTileDescription()));
@@ -48,11 +48,8 @@ export default class TileSidebar implements Page {
 
             const projectsHTML = UI.makeDiv();
             const visibleProjects = tile.possibleProjects.filter(project => project.isVisible(this.position!, this.run));
-            if (visibleProjects.length > 0) {
-                projectsHTML.appendChild(UI.makePara("Projects:"));
-                for (const project of visibleProjects) {
-                    projectsHTML.appendChild(this.makeProjectHTML(tile, project));
-                }
+            for (const project of visibleProjects) {
+                projectsHTML.appendChild(this.makeProjectHTML(tile, project));
             }
 
             const conversionsHTML = UI.makeDiv();
@@ -65,17 +62,16 @@ export default class TileSidebar implements Page {
 
             UI.fillHTML(this.html, [
                 UI.makePara(tile.getTileName()),
-                UI.makePara(`Coordinates: ${this.position.x}, ${this.position.y}`),
                 descriptionHTML,
                 housingHTML,
-                projectsHTML,
                 conversionsHTML,
+                projectsHTML,
             ]);
         }
     }
 
     private makeProjectHTML(tile: Tile, project: TileProject): HTMLElement {
-        const projectHTML = UI.makeDiv();
+        const projectHTML = UI.makeDiv(["tile-project"]);
 
         const button = UI.makeButton(
             project.title,
@@ -85,13 +81,23 @@ export default class TileSidebar implements Page {
         );
         projectHTML.appendChild(button);
 
+        projectHTML.appendChild(UI.makePara(project.projectDescription));
+
         if (project.costs.length === 0) {
             projectHTML.appendChild(UI.makePara("Cost: Free"));
         } else {
-            const cssClass = this.run.inventory.canAfford(project.costs) ? "project-requirement-met" : "project-requirement-unmet";
-            const costDescriptions = project.costs.map((cost: Cost) => `${cost.toString()}`);
-            const costsString = "Cost: " + costDescriptions.join(", ");
-            projectHTML.appendChild(UI.makePara(costsString, [cssClass]));
+            const inventoryClone = this.run.inventory.clone();
+            const costParas = project.costs.map((cost: Cost) => {
+                const affordable = inventoryClone.canAfford([cost]);
+                const para = UI.makePara(cost.toString(),
+                    [affordable ? "project-requirement-met" : "project-requirement-unmet"]);
+                if (affordable) {
+                    inventoryClone.payCost([cost]);
+                }
+                return para;
+            });
+            const costsDiv = UI.makeDivContaining([UI.makePara("Costs: "), ...costParas]);
+            projectHTML.appendChild(costsDiv);
         }
 
         if (project.completionRequirements.length > 0) {

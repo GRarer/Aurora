@@ -5,6 +5,8 @@ import MainMenu from "../menu/MainMenu.js";
 import TransitionScreen from "../transitionScreen/TransitionScreen.js";
 import ProductionScreen from "../productionScreen/ProductionScreen.js";
 import ResearchScreen from "../researchScreen/ResearchScreen.js";
+import EndScreen from "../endScreen/EndScreen.js";
+import Ending from "../../quests/Ending.js";
 
 export default class WorldScreenHeader implements Page {
     readonly html: HTMLElement;
@@ -47,7 +49,12 @@ export default class WorldScreenHeader implements Page {
 
             // reset description after time has passed
             setTimeout(() => {
-                this.refresh();
+                const endState: Ending | undefined = this.run.getQuestEndState();
+                if (endState) {
+                    GameWindow.show(new EndScreen(endState));
+                } else {
+                    this.refresh();
+                }
             }, 1500);
         }
         this.run.questCompletionShown = true;

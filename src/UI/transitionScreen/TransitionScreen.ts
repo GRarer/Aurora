@@ -27,7 +27,7 @@ export default class TransitionScreen implements Page {
         UI.fillHTML(this.html, [
             UI.makeDivContaining([
                 UI.makePara(`${quotedText}`),
-                UI.makePara(`-${this.quote.attribution}`, ["transition-attribution"])
+                UI.makePara(`- ${this.quote.attribution}`, ["transition-attribution"])
             ], ["transition-quote-panel"]),
             this.loadingArea
         ]);
