@@ -131,17 +131,6 @@ export namespace MusicManager {
         return note;
     }
 
-    // shift notes through octaves so they end up between min and max inclusive
-    function constrainNotes(notes: number[], min: number, max: number): number[] {
-        return notes.map(note => constrainNote(note, min, max));
-    }
-
-    function logChords(progression: number[][]): void {
-        console.log(
-            progression.map(chord => chord.map(note => Notes.midiNumberToNoteName(note)).join(" "))
-        );
-    }
-
     function queueNextMeasures(startingTime: number, startingChord: Chord): void {
         const beatLength: number = 60 / beatsPerMinute;
         let offsetTime: number = 0;
@@ -152,18 +141,25 @@ export namespace MusicManager {
         }));
         const drumLoop: Drums[] = generateDrumLoop();
         const progression: number[][] = generateChordProgression(state.scale, state.root);
-        for (let i = 0; i < 4; i++) {
-            for (const note of progression[i]) {
-                scheduleNote({
-                    note: constrainNote(note, state.root, state.root + 12),
-                    start: startingTime + offsetTime,
-                    duration: beatLength * state.rhythm.beats
-                }, instruments.pad);
+        // TODO: clean this up
+        for (let j = 0; j < 2; j++) {
+            for (let i = 0; i < 4; i++) {
+                for (const note of progression[i]) {
+                    scheduleNote({
+                        note: constrainNote(note, state.root, state.root + 12),
+                        start: startingTime + offsetTime,
+                        duration: beatLength * state.rhythm.beats
+                    }, instruments.pad);
+                }
+                for (const drum of drumLoop) {
+                    scheduleDrum(startingTime + offsetTime, drum);
+                    offsetTime += beatLength;
+                }
             }
-            for (const drum of drumLoop) {
-                scheduleDrum(startingTime + offsetTime, drum);
-                offsetTime += beatLength;
-            }
+        }
+        for (const drum of drumLoop) {
+            scheduleDrum(startingTime + offsetTime, drum);
+            offsetTime += beatLength;
         }
         window.setTimeout(() => {
             queueNextMeasures(startingTime + offsetTime, startingChord);
