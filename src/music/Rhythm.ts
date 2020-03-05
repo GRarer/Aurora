@@ -1,4 +1,5 @@
 import { Random } from "../util/Random.js";
+import { NonEmptyArray } from "../util/Arrays.js";
 
 export default class Rhythm {
 
@@ -8,7 +9,7 @@ export default class Rhythm {
     constructor(beats: number = 8) {
         this.subdivision = [];
         this._beats = beats;
-        this.generateSubdivision(beats);
+        this.generateNewSubdivision(beats);
     }
 
     get beats(): number {
@@ -31,13 +32,15 @@ export default class Rhythm {
         return r;
     }
 
-    generateSubdivision(beats: number): void {
+    generateNewSubdivision(beats: number): void {
         this._beats = beats;
         this.subdivision = [];
-        const divisions: number[] = [2, 3];
+        const divisions = [2, 3];
         const min: number = Math.min(...divisions);
         while (beats >= min) {
-            const current: number = Random.fromArray(divisions.filter(num => num <= beats));
+            // Beats must be larger than the minimum of divisions, so this cast
+            // is safe
+            const current: number = Random.fromArray(divisions.filter(num => num <= beats) as NonEmptyArray<number>);
             beats -= current;
             this.subdivision.push(current);
         }

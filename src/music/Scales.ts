@@ -4,6 +4,13 @@ import { Arrays } from "../util/Arrays.js";
 
 export type Scale = number; // scales are encoded with numbers in Ian Ring's format
 
+export interface ScaleQuery {
+    imperfections?: [number, number]; // allowed range for number of imperfections
+    hemitones?: [number, number]; // allowed range for number of hemitones
+    chord?: Scale; // chord that the scale must contain
+    notes?: [number, number]; // allowed range for number of notes in the scale
+}
+
 export namespace Scales {
 
     export function createScaleFromPitchClass(pitches: number[]): Scale {
@@ -83,30 +90,16 @@ export namespace Scales {
         return containsScale(scale, createScaleFromPitchClass(chord));
     }
 
-    let _scales: Scale[] = [];
-
-    export function scales(): Scale[] {
-        if (_scales.length === 0) {
-            _scales = Arrays.flatten([
-                getModes(2741), // major
-                getModes(2475), // neapolitan minor
-                getModes(1367), // leading whole-tone inverse
-                getModes(2477), // harmonic minor
-                getModes(2485), // harmonic major
-                getModes(2733), // melodic minor
-                getModes(2669), // Jeths' mode
-                getModes(2483), // double harmonic major
-            ]);
-        }
-        return _scales;
-    }
-
-    export interface ScaleQuery {
-        imperfections?: [number, number]; // allowed range for number of imperfections
-        hemitones?: [number, number]; // allowed range for number of hemitones
-        chord?: Scale; // chord that the scale must contain
-        notes?: [number, number]; // allowed range for number of notes in the scale
-    }
+    const scales: Scale[] = Arrays.flatten([
+        getModes(0xab5), // major
+        getModes(0x9ab), // neapolitan minor
+        getModes(0x557), // leading whole-tone inverse
+        getModes(0x9ad), // harmonic minor
+        getModes(0x9b5), // harmonic major
+        getModes(0xaad), // melodic minor
+        getModes(0xa6d), // Jeths' mode
+        getModes(0x9b3), // double harmonic major
+    ]);
 
     // TODO: this can be made more efficient by caching modes.
     // see if that's worthwhile.
@@ -136,7 +129,7 @@ export namespace Scales {
     }
 
     export function getAllScalesMatchingQuery(query: ScaleQuery): Scale[] {
-        return scales().filter(scale => matchesQuery(scale, query));
+        return scales.filter(scale => matchesQuery(scale, query));
     }
 
     // index into a pitch class, shifting up/down through octaves (ie, -1 is the last element of the class, but an octave down)

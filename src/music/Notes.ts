@@ -11,8 +11,10 @@ export interface Note {
 
 export namespace Notes {
 
-    export const noteNames: string[] = ["C", "C#", "D", "D#", "E", "F",
-        "F#", "G", "G#", "A", "A#", "B"];
+    export const noteNames: string[] = [
+        "C", "C#", "D", "D#", "E", "F",
+        "F#", "G", "G#", "A", "A#", "B"
+    ];
 
     export function midiNumberToFrequency(note: number): number {
         return Math.pow(2, (note - 69) / 12) * 440;

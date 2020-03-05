@@ -1,22 +1,15 @@
-import { Chord, ChordQualities, ChordMotion } from "./Chords.js";
-import { Note, Notes } from "./Notes.js";
+import { Note } from "./Notes.js";
 import Instrument from "./Instrument.js";
 import { AdsrOscillatorInstrument } from "./Instruments.js";
 import { Random } from "../util/Random.js";
-import { Scales, Scale } from "./Scales.js";
+import { Scales, Scale, ScaleQuery } from "./Scales.js";
 import Rhythm from "./Rhythm.js";
 import { Drumkit, Drums } from "./Drums.js";
+import { Arrays, NonEmptyArray } from "../util/Arrays.js";
 
 export namespace MusicManager {
 
-    export const beatsPerMinute: number = 220;
     export const context: AudioContext = new AudioContext();
-    export const motions: ChordMotion[] = [
-        // dominant function
-        new ChordMotion([ChordQualities.DOM7], [-1, -7, 5], [ChordQualities.DOM7, ChordQualities.MAJOR7, ChordQualities.MINOR7]),
-        // proximate harmony :)
-        new ChordMotion([ChordQualities.MAJOR7, ChordQualities.MINOR7], [-2, 2], [ChordQualities.DOM7, ChordQualities.MAJOR7, ChordQualities.MINOR7]),
-    ];
 
     export const instruments = {
         arp: new AdsrOscillatorInstrument(
@@ -37,12 +30,14 @@ export namespace MusicManager {
     export const drumkit: Drumkit = new Drumkit();
 
     interface MusicState {
+        beatsPerMinute: number;
         rhythm: Rhythm;
         root: number;
         scale: Scale;
     }
 
     const state: MusicState = {
+        beatsPerMinute: 220,
         rhythm: new Rhythm(),
         root: 60, // middle C
         scale: 2741 // major
@@ -55,7 +50,7 @@ export namespace MusicManager {
         AMBIGUOUS = "ambiguous"
     }
 
-    const backHalves: ChordFunction[][] = [
+    const backHalves: NonEmptyArray<ChordFunction[]> = [
         [ChordFunction.TONIC, ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT],
         [ChordFunction.SUBDOMINANT, ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT],
         [ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT, ChordFunction.DOMINANT],
@@ -63,7 +58,7 @@ export namespace MusicManager {
         [ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT, ChordFunction.AMBIGUOUS]
     ];
 
-    const FunctionDegrees: Record<ChordFunction, number[]> = {
+    const FunctionDegrees: Record<ChordFunction, NonEmptyArray<number>> = {
         "tonic": [0, 5], // I and VI
         "subdominant": [1, 3], // II and IV
         "dominant": [4, 6], // V and VII
@@ -131,14 +126,25 @@ export namespace MusicManager {
         return note;
     }
 
-    function queueNextMeasures(startingTime: number, startingChord: Chord): void {
-        const beatLength: number = 60 / beatsPerMinute;
+    function queueNextMeasures(startingTime: number): void {
+        const beatLength: number = 60 / state.beatsPerMinute;
         let offsetTime: number = 0;
-        state.rhythm.generateSubdivision(Random.fromArray([5, 6, 7, 8, 9, 11, 13]));
-        state.scale = Random.fromArray(Scales.getAllScalesMatchingQuery({
+
+        // Allowed time signatures, as n/8
+        const timeSignatures: NonEmptyArray<number> = [5, 6, 7, 8, 9, 11, 13];
+        state.rhythm.generateNewSubdivision(Random.fromArray(timeSignatures));
+
+        // Query all greek modes (only one imperfection) with a perfect fifth
+        // above the tonic
+        const query: ScaleQuery = {
             chord: 1 << 7,
             imperfections: [1, 1]
-        }));
+        };
+        const matchingScales = Scales.getAllScalesMatchingQuery(query);
+        if (Arrays.isNonEmpty(matchingScales)) {
+            state.scale = Random.fromArray(matchingScales);
+        }
+
         const drumLoop: Drums[] = generateDrumLoop();
         const progression: number[][] = generateChordProgression(state.scale, state.root);
         // TODO: clean this up
@@ -162,14 +168,14 @@ export namespace MusicManager {
             offsetTime += beatLength;
         }
         window.setTimeout(() => {
-            queueNextMeasures(startingTime + offsetTime, startingChord);
+            queueNextMeasures(startingTime + offsetTime);
         }, (startingTime + offsetTime - context.currentTime - 0.2) * 1000);
     }
 
     export function initialize(): void {
         masterGain.gain.value = 0.25;
         masterGain.connect(context.destination);
-        queueNextMeasures(context.currentTime, new Chord(60, ChordQualities.MINOR7));
+        queueNextMeasures(context.currentTime);
     }
 
     export function setVolume(volume: number): void {
