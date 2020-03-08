@@ -8,10 +8,10 @@ export namespace Arrays {
     }
 
     // creates a list of the desired length, filling it with values produced by the given function
-    export function generate<T>(length: number, func: () => T): T[] {
+    export function generate<T>(length: number, func: (i?: number) => T): T[] {
         const result: T[] = new Array(length);
         for (let i = 0; i < length; i++) {
-            result[i] = func();
+            result[i] = func(i);
         }
         return result;
     }
