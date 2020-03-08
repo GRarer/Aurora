@@ -51,12 +51,12 @@ export namespace Scales {
     export function getModes(scale: Scale): Scale[] {
         const r: Scale[] = [];
         let curr: Scale = scale;
-        while (curr !== scale || r.length === 0) { // once we return to the original scale we're done
+        do {
             if (curr & 1) { // only add proper scales - i.e., ones with roots
                 r.push(curr);
             }
             curr = rotateScale(curr, 1); // advance to the next mode
-        }
+        } while (curr !== scale); // once we return to the original scale we're done
         return r;
     }
 
