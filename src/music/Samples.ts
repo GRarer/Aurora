@@ -3,7 +3,7 @@ const tempAudioContext = new AudioContext();
 
 export interface SampleData {
     buffer: AudioBuffer;
-    loop: boolean; // true if should loop, false otherwise
+    shouldLoop: boolean;
     freq: number; // frequency of sample for pitchshifting reasons
 }
 
@@ -26,7 +26,6 @@ export namespace SampleUtils {
     }
 
     export function createBufferFromAudioData(length: number, filename: string): AudioBuffer {
-        console.log(filename);
         const buffer = new AudioBuffer({ numberOfChannels: 1, sampleRate: 44100, length: length });
         fetch(`assets/${filename}`, {
             headers: new Headers({
@@ -43,7 +42,16 @@ export namespace SampleUtils {
 }
 
 export const Samples: Record<SampleNames, SampleData> = {
-    "white_noise": { buffer: SampleUtils.createBufferFromGenerator(44100, (i) => 2 * Math.random() - 1), loop: true, freq: 440 },
-    "snare": { buffer: SampleUtils.createBufferFromAudioData(22050, "samples/snare.ogg"), loop: false, freq: 440 },
-    "kick": { buffer: SampleUtils.createBufferFromAudioData(22050, "samples/kick.ogg"), loop: false, freq: 440 }
+    "white_noise": {
+        buffer: SampleUtils.createBufferFromGenerator(44100, () => 2 * Math.random() - 1),
+        shouldLoop: true, freq: 440
+    },
+    "snare": {
+        buffer: SampleUtils.createBufferFromAudioData(22050, "samples/snare.ogg"),
+        shouldLoop: false, freq: 440
+    },
+    "kick": {
+        buffer: SampleUtils.createBufferFromAudioData(22050, "samples/kick.ogg"),
+        shouldLoop: false, freq: 440
+    }
 };

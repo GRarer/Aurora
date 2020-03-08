@@ -70,7 +70,7 @@ export class SampleInstrument extends Instrument {
         const freq: number = Notes.midiNumberToFrequency(note.note);
         const bufferNode = context.createBufferSource();
         bufferNode.buffer = this.buffer.buffer;
-        bufferNode.loop = this.buffer.loop;
+        bufferNode.loop = this.buffer.shouldLoop;
         bufferNode.playbackRate.setValueAtTime(freq / this.buffer.freq, note.start);
         const endtime: number = note.start + note.duration + (this.env.sustain || 0);
         if (note.endNote !== undefined) {
