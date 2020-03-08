@@ -67,10 +67,11 @@ export namespace MusicManager {
 
     function generateChordProgression(scale: Scale, root: number, extensions: number = 4): number[][] {
         const pitchClass: number[] = Scales.getPitchClass(scale);
-        const backHalf: ChordFunction[] = Random.fromArray(backHalves);
-        // always start from the tonic and add a valid back half
-        // this way it'll always fit the tonic -> subdominant -> dominant pattern
-        const chordDegrees: number[] = [0].concat(backHalf.map(f => Random.fromArray(FunctionDegrees[f])));
+        const chordDegrees: number[] = Random.fromArray(backHalves) // take one of the valid chord patterns
+            // replace functions like "dominant" "subdominant" etc with degrees
+            .map(f => Random.fromArray(FunctionDegrees[f]));
+        chordDegrees.unshift(0); // make sure it starts with the tonic
+        // convert degrees to full diatonic chords
         return chordDegrees.map(degree => Arrays.generate(
             extensions, (i: number) =>
                 Scales.indexIntoPitchClass(pitchClass, degree + 2 * i) + root)
