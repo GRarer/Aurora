@@ -19,20 +19,17 @@ export namespace Scales {
         }
         return pitches.map(pitch => 1 << mod(pitch, 12)) // mod by 12 to fit into octave
             .filter((val, i, arr) => arr.indexOf(val) === i) // remove duplicates
-            .reduce((acc, curr) => acc | curr); // combine into final bit vector
+            .reduce((acc, curr) => acc | curr, 0); // combine into final bit vector
     }
 
     // turns a scale into the set of pitches from the root
     // i.e., the scale 2^7 + 2^6 + 2^5 + 2^0 becomes [0, 5, 6, 7]
     export function getPitchClass(scale: Scale): number[] {
         const r: number[] = [];
-        let i = 0;
-        while (scale > 0) {
+        for (let i = 0; scale !== 0; scale >>>= 1) {
             if (scale & 1) {
                 r.push(i);
             }
-            scale = scale >> 1;
-            i++;
         }
         return r;
     }
@@ -104,23 +101,15 @@ export namespace Scales {
     // TODO: this can be made more efficient by caching modes.
     // see if that's worthwhile.
     export function matchesQuery(scale: Scale, query: ScaleQuery): boolean {
-        if (query.notes) {
-            const notes = getNumberOfNotes(scale);
-            if (notes < query.notes[0] || notes > query.notes[1]) {
-                return false;
-            }
+        const outOfBounds = (val: number, range: [number, number]): boolean => (val < range[0] || val > range[1]);
+        if (query.notes && outOfBounds(getNumberOfNotes(scale), query.notes)) {
+            return false;
         }
-        if (query.imperfections) {
-            const imperfections = getImperfections(scale);
-            if (imperfections < query.imperfections[0] || imperfections > query.imperfections[1]) {
-                return false;
-            }
+        if (query.imperfections && outOfBounds(getImperfections(scale), query.imperfections)) {
+            return false;
         }
-        if (query.hemitones) {
-            const hemitones = countInterval(scale, 1);
-            if (hemitones < query.hemitones[0] || hemitones > query.hemitones[1]) {
-                return false;
-            }
+        if (query.hemitones && outOfBounds(countInterval(scale, 1), query.hemitones)) {
+            return false;
         }
         if (query.chord && !containsScale(scale, query.chord)) {
             return false;
