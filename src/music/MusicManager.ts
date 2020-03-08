@@ -82,27 +82,20 @@ export namespace MusicManager {
     }
 
     function generateDrumLoop(): Drums[] {
-        const drumLoop: Drums[] = [];
         const subdivision: number[] = state.rhythm.subdivision;
-        let onKick: boolean = true;
-        for (let i = 0; i < subdivision.length; i++) {
-            let acc: number = subdivision[i] - 1;
-            if (onKick) {
-                drumLoop.push(Drums.KICK);
-            } else {
-                drumLoop.push(Drums.SNARE);
-            }
-            onKick = !onKick;
-            while (acc > 0) {
-                if (acc === 1 && i === subdivision.length - 1) {
-                    drumLoop.push(Drums.OPEN_HI_HAT);
+        return Arrays.flatten(subdivision.map((beats: number, index: number) => {
+            // start on kick on the strong beats and snare on the weak beats
+            const arr: Drums[] = [(index % 2 === 0) ? Drums.KICK : Drums.SNARE];
+            // follow with hi-hats
+            for (let i = 0; i < beats - 1; i++) {
+                if (index === subdivision.length - 1 && i === beats - 2) {
+                    arr.push(Drums.OPEN_HI_HAT); // end the measure on an open hi-hat
                 } else {
-                    drumLoop.push(Drums.CLOSED_HI_HAT);
+                    arr.push(Drums.CLOSED_HI_HAT);
                 }
-                acc--;
             }
-        }
-        return drumLoop;
+            return arr;
+        }));
     }
 
     function scheduleDrum(start: number, drum: Drums): void {
