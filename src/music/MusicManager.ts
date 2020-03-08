@@ -71,14 +71,10 @@ export namespace MusicManager {
         // always start from the tonic and add a valid back half
         // this way it'll always fit the tonic -> subdominant -> dominant pattern
         const chordDegrees: number[] = [0].concat(backHalf.map(f => Random.fromArray(FunctionDegrees[f])));
-        return chordDegrees.map(degree => {
-            const chord = [];
-            for (let i = 0; i < extensions; i++) {
-                // step up scale in thirds starting from chord's root
-                chord[i] = Scales.indexIntoPitchClass(pitchClass, degree + 2 * i) + root;
-            }
-            return chord;
-        });
+        return chordDegrees.map(degree => Arrays.generate(
+            extensions, (i: number) =>
+                Scales.indexIntoPitchClass(pitchClass, degree + 2 * i) + root)
+        );
     }
 
     function generateDrumLoop(): Drums[] {
