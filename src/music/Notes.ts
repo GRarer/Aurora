@@ -16,19 +16,23 @@ export namespace Notes {
         "F#", "G", "G#", "A", "A#", "B"
     ];
 
-    export function midiNumberToFrequency(note: number): number {
-        return Math.pow(2, (note - 69) / 12) * 440;
+    export function midiNumberToFrequency(midiNumber: number): number {
+        return Math.pow(2, (midiNumber - 69) / 12) * 440;
     }
 
-    export function midiNumberToNoteName(note: number): string {
-        return `${noteNames[mod(note, 12)]}${Math.floor(note / 12) - 1}`;
+    export function midiNumberToNoteName(midiNumber: number): string {
+        return `${noteNames[mod(midiNumber, 12)]}${Math.floor(midiNumber / 12) - 1}`;
     }
 
-    export function detuneWithCoeff(note: number, detuneCoeff: number): number[] {
+    // Pitchshift the given note up and down using the coefficient.
+    // If the coefficient is 1, it returns the frequency of the initial note.
+    // Otherwise, it returns [frequency / coefficient, frequency, frequency * coefficient].
+    // Since frequency perception is logarithmic, this shifts the frequency up and down by the same amount.
+    export function detuneWithCoeff(midiNumber: number, detuneCoeff: number): number[] {
         if (detuneCoeff === 1) {
-            return [midiNumberToFrequency(note)];
+            return [midiNumberToFrequency(midiNumber)];
         } else {
-            const freq: number = midiNumberToFrequency(note);
+            const freq: number = midiNumberToFrequency(midiNumber);
             return [freq / detuneCoeff, freq, freq * detuneCoeff];
         }
     }
