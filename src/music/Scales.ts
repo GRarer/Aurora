@@ -5,10 +5,14 @@ import { Arrays } from "../util/Arrays.js";
 export type Scale = number; // scales are encoded with numbers in Ian Ring's format
 
 export interface ScaleQuery {
-    imperfections?: [number, number]; // allowed range for number of imperfections
-    hemitones?: [number, number]; // allowed range for number of hemitones
-    chord?: Scale; // chord that the scale must contain
-    notes?: [number, number]; // allowed range for number of notes in the scale
+    // allowed range for number of imperfections (inclusive)
+    imperfections?: [number, number];
+    // allowed range for number of hemitones (inclusive)
+    hemitones?: [number, number];
+    // chord that the scale must contain
+    chord?: Scale;
+    // allowed range for number of notes in the scale (inclusive)
+    notes?: [number, number];
 }
 
 export namespace Scales {
