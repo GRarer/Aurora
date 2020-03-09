@@ -7,19 +7,12 @@ export enum Drums {
 
 export class Drumkit {
 
-    tri: OscillatorInstrument;
-    noise: SampleInstrument;
+    tri: OscillatorInstrument = new OscillatorInstrument({ type: "triangle" }, { attack: 0.01, decay: 0.2 }, 5);
+    noise: SampleInstrument = new SampleInstrument(Samples[SampleNames.WHITE_NOISE], { attack: 0.01, decay: 0.1 }, 1.5);
 
     // TODO: generalize sampling
-    snare: SampleInstrument;
-    kick: SampleInstrument;
-
-    constructor() {
-        this.tri = new OscillatorInstrument({ type: "triangle" }, { attack: 0.01, decay: 0.2 }, 5);
-        this.noise = new SampleInstrument(Samples[SampleNames.WHITE_NOISE], { attack: 0.01, decay: 0.1 }, 1.5);
-        this.snare = new SampleInstrument(Samples[SampleNames.SNARE], { sustain: 1 }, 1.5);
-        this.kick = new SampleInstrument(Samples[SampleNames.KICK], { sustain: 1 }, 1.5);
-    }
+    snare: SampleInstrument = new SampleInstrument(Samples[SampleNames.SNARE], { sustain: 1 }, 1.5);
+    kick: SampleInstrument = new SampleInstrument(Samples[SampleNames.KICK], { sustain: 1 }, 1.5);
 
     // TODO: make these sound good
     scheduleHit(context: AudioContext, start: number, drum: Drums): AudioNode {
