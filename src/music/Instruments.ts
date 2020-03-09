@@ -3,7 +3,7 @@ import { Envelopes, AdsrConfig } from "./Envelopes.js";
 import { Note, Notes } from "./Notes.js";
 import { SampleData } from "./Samples.js";
 
-type OscType = typeof OscillatorNode.prototype.type;
+type OscType = OscillatorNode["type"];
 
 export interface OscillatorConfig {
     type: OscType; // either 'sine', 'triangle', 'square', or 'sawtooth'
@@ -33,9 +33,11 @@ export class OscillatorInstrument extends Instrument {
         const freqs: number[] = Notes.detuneWithCoeff(note.note, this._detune);
         // note ending frequencies are either where they started or at the endNote
         const endfreqs: number[] = (note.endNote === undefined) ? freqs : Notes.detuneWithCoeff(note.endNote, this._detune);
+        // volume scaling so multiple oscillators from detune don't result in louder sounds
+        const volume = Math.min(1 / freqs.length, 1) * this.volume;
         // create envelope
         const gain: GainNode = Envelopes.createAdsrEnvelope(context, note.start, note.duration,
-            this.env, Math.min(1 / freqs.length, 1) * this.volume);
+            this.env, volume);
         const end = note.start + note.duration + (this.env.sustain || 0);
         // initialize oscillator(s)
         const oscs: OscillatorNode[] = freqs.map((freq, i) => {
@@ -73,6 +75,8 @@ export class SampleInstrument extends Instrument {
         const bufferNode = context.createBufferSource();
         bufferNode.buffer = this.buffer.buffer;
         bufferNode.loop = this.buffer.shouldLoop;
+        // since samples have a frequency already, we have to change playback rate to change pitch
+        // if we want to play an 880Hz note, we need to play a 440Hz sample twice as fast, etc.
         bufferNode.playbackRate.setValueAtTime(freq / this.buffer.freq, note.start);
         const endtime: number = note.start + note.duration + (this.env.sustain || 0);
         if (note.endNote !== undefined) {
