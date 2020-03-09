@@ -1,4 +1,5 @@
 // TODO: do this better
+// This is necessary for decoding sample data, but there has to be a better way to do this.
 const tempAudioContext = new AudioContext();
 
 export interface SampleData {
