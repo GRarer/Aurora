@@ -15,6 +15,13 @@ interface MusicState {
     scale: Scale;
 }
 
+enum ChordFunction {
+    TONIC = "tonic",
+    SUBDOMINANT = "subdominant",
+    DOMINANT = "dominant",
+    AMBIGUOUS = "ambiguous"
+}
+
 export namespace MusicManager {
 
     export const context: AudioContext = new AudioContext();
@@ -43,13 +50,6 @@ export namespace MusicManager {
         root: 0, // middle C
         scale: 2741 // major
     };
-
-    enum ChordFunction {
-        TONIC = "tonic",
-        SUBDOMINANT = "subdominant",
-        DOMINANT = "dominant",
-        AMBIGUOUS = "ambiguous"
-    }
 
     // All chord progressions we generate here start with the tonic and end with one of these patterns.
     const backHalves: NonEmptyArray<ChordFunction[]> = [
