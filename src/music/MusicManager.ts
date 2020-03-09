@@ -8,6 +8,13 @@ import { Drumkit, Drums } from "./Drums.js";
 import { Arrays, NonEmptyArray } from "../util/Arrays.js";
 import { mod } from "../util/Util.js";
 
+interface MusicState {
+    beatsPerMinute: number;
+    rhythm: Rhythm;
+    root: number; // the root of the current key. (0 is C, 1 is C#, ..., 11 is B)
+    scale: Scale;
+}
+
 export namespace MusicManager {
 
     export const context: AudioContext = new AudioContext();
@@ -29,13 +36,6 @@ export namespace MusicManager {
 
     export const masterGain: GainNode = context.createGain();
     export const drumkit: Drumkit = new Drumkit();
-
-    interface MusicState {
-        beatsPerMinute: number;
-        rhythm: Rhythm;
-        root: number; // the root of the current key. (0 is C, 1 is C#, ..., 11 is B)
-        scale: Scale;
-    }
 
     const state: MusicState = {
         beatsPerMinute: 220,
