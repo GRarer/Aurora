@@ -30,7 +30,7 @@ export class OscillatorInstrument extends Instrument {
     }
 
     scheduleNote(context: AudioContext, note: Note): AudioNode {
-        const freqs: number[] = Notes.detuneWithCoeff(note.note, this._detune);
+        const freqs: number[] = Notes.detuneWithCoeff(note.midiNumber, this._detune);
         // note ending frequencies are either where they started or at the endNote
         const endfreqs: number[] = (note.endNote === undefined) ? freqs : Notes.detuneWithCoeff(note.endNote, this._detune);
         // volume scaling so multiple oscillators from detune don't result in louder sounds
@@ -71,7 +71,7 @@ export class SampleInstrument extends Instrument {
     }
 
     scheduleNote(context: AudioContext, note: Note): AudioNode {
-        const freq: number = Notes.midiNumberToFrequency(note.note);
+        const freq: number = Notes.midiNumberToFrequency(note.midiNumber);
         const bufferNode = context.createBufferSource();
         bufferNode.buffer = this.buffer.buffer;
         bufferNode.loop = this.buffer.shouldLoop;

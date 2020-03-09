@@ -138,7 +138,7 @@ export namespace MusicManager {
             for (let i = 0; i < 4; i++) {
                 for (const note of progression[i]) {
                     scheduleNote({
-                        note: octave(note, 5),
+                        midiNumber: octave(note, 5),
                         start: startingTime + offsetTime,
                         duration: beatLength * state.rhythm.beats
                     }, instruments.pad);

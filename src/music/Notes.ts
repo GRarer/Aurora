@@ -2,7 +2,7 @@ import { mod } from "../util/Util.js";
 
 export interface Note {
 
-    note: number; // the MIDI number of the note
+    midiNumber: number; // the MIDI number of the note
     start: number; // starting time in seconds
     duration: number; // duration in seconds
     endNote?: number; // MIDI number of note to end on. if undefined, this has no effect
