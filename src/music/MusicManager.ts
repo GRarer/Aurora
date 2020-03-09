@@ -51,6 +51,7 @@ export namespace MusicManager {
         AMBIGUOUS = "ambiguous"
     }
 
+    // All chord progressions we generate here start with the tonic and end with one of these patterns.
     const backHalves: NonEmptyArray<ChordFunction[]> = [
         [ChordFunction.TONIC, ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT],
         [ChordFunction.SUBDOMINANT, ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT],
@@ -59,7 +60,7 @@ export namespace MusicManager {
         [ChordFunction.SUBDOMINANT, ChordFunction.DOMINANT, ChordFunction.AMBIGUOUS]
     ];
 
-    const FunctionDegrees: Record<ChordFunction, NonEmptyArray<number>> = {
+    const functionDegrees: Record<ChordFunction, NonEmptyArray<number>> = {
         "tonic": [0, 5], // I and VI
         "subdominant": [1, 3], // II and IV
         "dominant": [4, 6], // V and VII
@@ -70,7 +71,7 @@ export namespace MusicManager {
         const pitchClass: number[] = Scales.getPitchClass(scale);
         const chordDegrees: number[] = Random.fromArray(backHalves) // take one of the valid chord patterns
             // replace functions like "dominant" "subdominant" etc with degrees
-            .map(f => Random.fromArray(FunctionDegrees[f]));
+            .map(f => Random.fromArray(functionDegrees[f]));
         chordDegrees.unshift(0); // make sure it starts with the tonic
         // convert degrees to full diatonic chords
         return chordDegrees.map(degree => Arrays.generate(
