@@ -10,10 +10,11 @@ export interface OscillatorConfig {
     detune?: number; // detune in cents
 }
 
+// A basic instrument that uses a basic waveform (with or without detune).
 export class OscillatorInstrument extends Instrument {
 
     type: OscType;
-    _detune: number;
+    private _detune: number;
     env: AdsrConfig;
 
     constructor(osc: OscillatorConfig, env: AdsrConfig, volume: number = 1) {
@@ -55,6 +56,7 @@ export class OscillatorInstrument extends Instrument {
 
 }
 
+// An instrument that uses an audio sample, speeding it up or slowing it down to play different notes.
 export class SampleInstrument extends Instrument {
 
     buffer: SampleData;
