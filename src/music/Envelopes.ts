@@ -15,24 +15,24 @@ export namespace Envelopes {
         const decay = env.decay || 0;
         const sustain = env.sustain || 0;
         const release = env.release || 0;
-        const gain: GainNode = context.createGain();
-        gain.gain.setValueAtTime(0, start);
+        const gainNode: GainNode = context.createGain();
+        gainNode.gain.setValueAtTime(0, start);
         if (duration < attack) {
             // note gets cut off in middle of attack
-            gain.gain.linearRampToValueAtTime(lerp(0, volume, duration / attack), start + duration);
-            gain.gain.linearRampToValueAtTime(0, start + duration + release);
+            gainNode.gain.linearRampToValueAtTime(lerp(0, volume, duration / attack), start + duration);
+            gainNode.gain.linearRampToValueAtTime(0, start + duration + release);
         } else if (duration < attack + decay) {
             // note gets cut off in middle of decay
-            gain.gain.linearRampToValueAtTime(volume, start + attack);
-            gain.gain.linearRampToValueAtTime(lerp(volume, volume * sustain, (duration - attack) / decay), start + attack + decay);
-            gain.gain.linearRampToValueAtTime(0, start + duration + release);
+            gainNode.gain.linearRampToValueAtTime(volume, start + attack);
+            gainNode.gain.linearRampToValueAtTime(lerp(volume, volume * sustain, (duration - attack) / decay), start + attack + decay);
+            gainNode.gain.linearRampToValueAtTime(0, start + duration + release);
         } else {
             // envelope executes fully
-            gain.gain.linearRampToValueAtTime(volume, start + attack);
-            gain.gain.linearRampToValueAtTime(volume * sustain, start + attack + decay);
-            gain.gain.linearRampToValueAtTime(0, start + duration + release);
+            gainNode.gain.linearRampToValueAtTime(volume, start + attack);
+            gainNode.gain.linearRampToValueAtTime(volume * sustain, start + attack + decay);
+            gainNode.gain.linearRampToValueAtTime(0, start + duration + release);
         }
-        return gain;
+        return gainNode;
     }
 
 }
