@@ -11,10 +11,7 @@ export namespace Envelopes {
 
     export function createAdsrEnvelope(context: AudioContext, start: number, duration: number, env: AdsrConfig, volume: number = 1): GainNode {
         // these are all optional, so make sure they're not undefined
-        const attack = env.attack || 0;
-        const decay = env.decay || 0;
-        const sustain = env.sustain || 0;
-        const release = env.release || 0;
+        const { attack = 0, sustain = 0, decay = 0, release = 0 } = env;
         const gainNode: GainNode = context.createGain();
         gainNode.gain.setValueAtTime(0, start);
         if (duration < attack) {
