@@ -11,3 +11,7 @@ export function lerp(min: number, max: number, t: number): number {
 export function mod(a: number, b: number): number {
     return a - (b * Math.floor(a / b));
 }
+
+export function impossible(): never {
+    throw new Error("unreachable");
+}
