@@ -6,6 +6,7 @@ import { Scales, Scale, ScaleQuery } from "./Scales.js";
 import Rhythm from "./Rhythm.js";
 import { Drumkit, Drums } from "./Drums.js";
 import { Arrays, NonEmptyArray } from "../util/Arrays.js";
+import { mod } from "../util/Util.js";
 
 export namespace MusicManager {
 
@@ -39,7 +40,7 @@ export namespace MusicManager {
     const state: MusicState = {
         beatsPerMinute: 220,
         rhythm: new Rhythm(),
-        root: 60, // middle C
+        root: 0, // middle C
         scale: 2741 // major
     };
 
@@ -107,7 +108,7 @@ export namespace MusicManager {
 
 
     function octave(root: number, octave: number): number {
-        return root + octave * 12;
+        return mod(root, 12) + octave * 12;
     }
 
     function queueNextMeasures(startingTime: number): void {
@@ -136,7 +137,7 @@ export namespace MusicManager {
             for (let i = 0; i < 4; i++) {
                 for (const note of progression[i]) {
                     scheduleNote({
-                        note: octave(note, 4),
+                        note: octave(note, 5),
                         start: startingTime + offsetTime,
                         duration: beatLength * state.rhythm.beats
                     }, instruments.pad);
