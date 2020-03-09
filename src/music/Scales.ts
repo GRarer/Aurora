@@ -115,7 +115,9 @@ export namespace Scales {
         if (query.hemitones && outOfBounds(countInterval(scale, 1), query.hemitones)) {
             return false;
         }
-        if (query.chord && !containsScale(scale, query.chord)) {
+        // Any scale will contain the scale 0. (This is similar to how the empty set is a subset of any set.)
+        // In that case it's sensible / slightly more efficient to skip the check if query.chord is 0.
+        if (query.chord !== undefined && query.chord !== 0 && !containsScale(scale, query.chord)) {
             return false;
         }
         return true;
