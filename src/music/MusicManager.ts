@@ -32,7 +32,7 @@ export namespace MusicManager {
     interface MusicState {
         beatsPerMinute: number;
         rhythm: Rhythm;
-        root: number;
+        root: number; // the root of the current key. (0 is C, 1 is C#, ..., 11 is B)
         scale: Scale;
     }
 
@@ -105,15 +105,9 @@ export namespace MusicManager {
         instOut.connect(masterGain);
     }
 
-    // shift note through the octaves until it ends up between min and max
-    function constrainNote(note: number, min: number, max: number): number {
-        while (note < min) {
-            note += 12;
-        }
-        while (note > max) {
-            note -= 12;
-        }
-        return note;
+
+    function octave(root: number, octave: number): number {
+        return root + octave * 12;
     }
 
     function queueNextMeasures(startingTime: number): void {
@@ -142,7 +136,7 @@ export namespace MusicManager {
             for (let i = 0; i < 4; i++) {
                 for (const note of progression[i]) {
                     scheduleNote({
-                        note: constrainNote(note, state.root, state.root + 12),
+                        note: octave(note, 4),
                         start: startingTime + offsetTime,
                         duration: beatLength * state.rhythm.beats
                     }, instruments.pad);
