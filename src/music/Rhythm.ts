@@ -4,7 +4,7 @@ import { NonEmptyArray } from "../util/Arrays.js";
 export default class Rhythm {
 
     subdivision: number[];
-    _beats: number;
+    private _beats: number;
 
     constructor(beats: number = 8) {
         this.subdivision = [];
