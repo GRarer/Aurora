@@ -5,6 +5,8 @@ export default class Rhythm {
 
     subdivision: number[];
     private _beats: number;
+    // valid numbers to group beats into
+    private static readonly divisions: number[] = [2, 3];
 
     constructor(beats: number = 8) {
         this.subdivision = [];
@@ -35,12 +37,11 @@ export default class Rhythm {
     generateNewSubdivision(beats: number): void {
         this._beats = beats;
         this.subdivision = [];
-        const divisions = [2, 3];
-        const min: number = Math.min(...divisions);
+        const min: number = Math.min(...Rhythm.divisions);
         while (beats >= min) {
             // Beats must be larger than the minimum of divisions, so this cast
             // is safe
-            const current: number = Random.fromArray(divisions.filter(num => num <= beats) as NonEmptyArray<number>);
+            const current: number = Random.fromArray(Rhythm.divisions.filter(num => num <= beats) as NonEmptyArray<number>);
             beats -= current;
             this.subdivision.push(current);
         }
