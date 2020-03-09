@@ -10,7 +10,7 @@ export interface OscillatorConfig {
     detune?: number; // detune in cents
 }
 
-export class AdsrOscillatorInstrument extends Instrument {
+export class OscillatorInstrument extends Instrument {
 
     type: OscType;
     _detune: number;

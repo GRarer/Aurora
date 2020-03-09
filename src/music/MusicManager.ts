@@ -1,6 +1,6 @@
 import { Note } from "./Notes.js";
 import Instrument from "./Instrument.js";
-import { AdsrOscillatorInstrument } from "./Instruments.js";
+import { OscillatorInstrument } from "./Instruments.js";
 import { Random } from "../util/Random.js";
 import { Scales, Scale, ScaleQuery } from "./Scales.js";
 import Rhythm from "./Rhythm.js";
@@ -20,15 +20,15 @@ export namespace MusicManager {
     export const context: AudioContext = new AudioContext();
 
     export const instruments = {
-        arp: new AdsrOscillatorInstrument(
+        arp: new OscillatorInstrument(
             { type: "sawtooth", detune: 3 },
             { attack: 0.01, decay: 0.05, sustain: 0.0, release: 0.1 }
         ),
-        bass: new AdsrOscillatorInstrument(
+        bass: new OscillatorInstrument(
             { type: "triangle", detune: 2 },
             { attack: 0.01, decay: 0.01, sustain: 1.0, release: 0.1 }
         ),
-        pad: new AdsrOscillatorInstrument(
+        pad: new OscillatorInstrument(
             { type: "triangle", detune: 4 },
             { attack: 1.0, decay: 0.1, sustain: 0.5, release: 0.5 }
         )

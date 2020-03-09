@@ -1,4 +1,4 @@
-import { AdsrOscillatorInstrument, SampleInstrument } from "./Instruments.js";
+import { OscillatorInstrument, SampleInstrument } from "./Instruments.js";
 import { Samples, SampleNames } from "./Samples.js";
 
 export enum Drums {
@@ -7,7 +7,7 @@ export enum Drums {
 
 export class Drumkit {
 
-    tri: AdsrOscillatorInstrument;
+    tri: OscillatorInstrument;
     noise: SampleInstrument;
 
     // TODO: generalize sampling
@@ -15,7 +15,7 @@ export class Drumkit {
     kick: SampleInstrument;
 
     constructor() {
-        this.tri = new AdsrOscillatorInstrument({ type: "triangle" }, { attack: 0.01, decay: 0.2 }, 5);
+        this.tri = new OscillatorInstrument({ type: "triangle" }, { attack: 0.01, decay: 0.2 }, 5);
         this.noise = new SampleInstrument(Samples[SampleNames.WHITE_NOISE], { attack: 0.01, decay: 0.1 }, 1.5);
         this.snare = new SampleInstrument(Samples[SampleNames.SNARE], { sustain: 1 }, 1.5);
         this.kick = new SampleInstrument(Samples[SampleNames.KICK], { sustain: 1 }, 1.5);
