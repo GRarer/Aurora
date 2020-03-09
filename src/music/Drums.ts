@@ -1,5 +1,6 @@
 import { OscillatorInstrument, SampleInstrument } from "./Instruments.js";
 import { Samples, SampleNames } from "./Samples.js";
+import { impossible } from "../util/Util.js";
 
 export enum Drums {
     KICK, SNARE, CLOSED_HI_HAT, OPEN_HI_HAT
@@ -45,6 +46,7 @@ export class Drumkit {
                 start: start,
                 duration: 0.2
             });
+        default: impossible();
         }
     }
 
