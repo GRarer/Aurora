@@ -34,6 +34,7 @@ export namespace Scales {
             if (scale & 1) {
                 r.push(i);
             }
+            i++;
         }
         return r;
     }
