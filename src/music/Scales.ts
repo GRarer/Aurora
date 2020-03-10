@@ -63,7 +63,7 @@ export namespace Scales {
 
     export function hasInterval(scale: Scale, semitones: number): boolean {
         semitones = mod(semitones, 12);
-        return (scale & (1 << semitones)) > 0; // if the semitones-th bit is set, the scale contains a given interval
+        return (scale & (1 << semitones)) !== 0; // if the semitones-th bit is set, the scale contains a given interval
     }
 
     // count the instances of a particular interval in a scale
