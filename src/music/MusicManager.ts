@@ -8,11 +8,19 @@ import { Drumkit, Drums } from "./Drums.js";
 import { Arrays, NonEmptyArray } from "../util/Arrays.js";
 import { mod } from "../util/Util.js";
 
+enum MeasureContents {
+    DRUMS, CHORDS
+}
+
 interface MusicState {
     beatsPerMinute: number;
     rhythm: Rhythm;
     root: number; // the root of the current key. (0 is C, 1 is C#, ..., 11 is B)
     scale: Scale;
+    progression: number[][]; // current chord progression
+    drumLoop: Drums[];
+    chordIndex: number; // index of current chord
+    queue: MeasureContents[][];
 }
 
 enum ChordFunction {
@@ -48,7 +56,11 @@ export namespace MusicManager {
         beatsPerMinute: 220,
         rhythm: new Rhythm(),
         root: 0, // middle C
-        scale: 2741 // major
+        scale: 2741, // major
+        progression: [],
+        chordIndex: 0,
+        drumLoop: [],
+        queue: []
     };
 
     // All chord progressions we generate here start with the tonic and end with one of these patterns.
@@ -112,14 +124,10 @@ export namespace MusicManager {
         return mod(root, 12) + octave * 12;
     }
 
-    function queueNextMeasures(startingTime: number): void {
-        const beatLength: number = 60 / state.beatsPerMinute;
-        let offsetTime: number = 0;
-
+    function regenerateState(): void {
         // Allowed time signatures, as n/8
         const timeSignatures: NonEmptyArray<number> = [5, 6, 7, 8, 9, 11, 13];
         state.rhythm.generateNewSubdivision(Random.fromArray(timeSignatures));
-
         // Query all greek modes (only one imperfection) with a perfect fifth
         // above the tonic
         const query: ScaleQuery = {
@@ -130,32 +138,66 @@ export namespace MusicManager {
         if (Arrays.isNonEmpty(matchingScales)) {
             state.scale = Random.fromArray(matchingScales);
         }
+        state.drumLoop = generateDrumLoop();
+        state.progression = generateChordProgression(state.scale, state.root);
+        state.queue = [
+            [MeasureContents.CHORDS, MeasureContents.DRUMS],
+            [MeasureContents.CHORDS, MeasureContents.DRUMS],
+            [MeasureContents.CHORDS, MeasureContents.DRUMS],
+            [MeasureContents.CHORDS, MeasureContents.DRUMS],
+            [MeasureContents.CHORDS, MeasureContents.DRUMS],
+            [MeasureContents.CHORDS, MeasureContents.DRUMS],
+            [MeasureContents.CHORDS, MeasureContents.DRUMS],
+            [MeasureContents.CHORDS, MeasureContents.DRUMS],
+            [MeasureContents.DRUMS]
+        ];
+    }
 
-        const drumLoop: Drums[] = generateDrumLoop();
-        const progression: number[][] = generateChordProgression(state.scale, state.root);
-        // TODO: clean this up
-        for (let j = 0; j < 2; j++) {
-            for (let i = 0; i < 4; i++) {
-                for (const note of progression[i]) {
-                    scheduleNote({
-                        midiNumber: octave(note, 5),
-                        start: startingTime + offsetTime,
-                        duration: beatLength * state.rhythm.beats
-                    }, instruments.pad);
-                }
-                for (const drum of drumLoop) {
-                    scheduleDrum(startingTime + offsetTime, drum);
-                    offsetTime += beatLength;
-                }
-            }
+    function queueChord(startingTime: number): void {
+        const curChord = state.progression[mod(state.chordIndex, state.progression.length)];
+        const beatLength: number = 60 / state.beatsPerMinute;
+        for (const val of curChord) {
+            scheduleNote({
+                midiNumber: octave(val, 5),
+                start: startingTime,
+                duration: beatLength * state.rhythm.beats
+            }, instruments.pad);
         }
-        for (const drum of drumLoop) {
+        state.chordIndex++;
+    }
+
+    function queueDrumLoop(startingTime: number): void {
+        const beatLength: number = 60 / state.beatsPerMinute;
+        let offsetTime = 0;
+        for (const drum of state.drumLoop) {
             scheduleDrum(startingTime + offsetTime, drum);
             offsetTime += beatLength;
         }
+    }
+
+    function queueNextMeasures(startingTime: number): void {
+        const beatLength: number = 60 / state.beatsPerMinute;
+        if (state.queue.length === 0) {
+            regenerateState();
+        }
+        const measureLength: number = beatLength * state.rhythm.beats;
+        if (state.queue.length > 0) {
+            // this cast is safe since it's only performed if there is anything in the queue
+            const currentContents: MeasureContents[] = state.queue.shift() as MeasureContents[];
+            for (const k of currentContents) {
+                switch (k) {
+                case MeasureContents.DRUMS:
+                    queueDrumLoop(startingTime);
+                    break;
+                case MeasureContents.CHORDS:
+                    queueChord(startingTime);
+                    break;
+                }
+            }
+        }
         window.setTimeout(() => {
-            queueNextMeasures(startingTime + offsetTime);
-        }, (startingTime + offsetTime - context.currentTime - 0.2) * 1000);
+            queueNextMeasures(startingTime + measureLength);
+        }, (startingTime + measureLength - context.currentTime - 0.4) * 1000);
     }
 
     export function initialize(): void {
