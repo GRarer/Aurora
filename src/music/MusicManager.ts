@@ -197,7 +197,7 @@ export namespace MusicManager {
         }
         window.setTimeout(() => {
             queueNextMeasures(startingTime + measureLength);
-        }, (startingTime + measureLength - context.currentTime - 0.4) * 1000);
+        }, (startingTime + measureLength - context.currentTime) * 1000);
     }
 
     export function initialize(): void {
