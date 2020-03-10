@@ -6,7 +6,7 @@ import { Scales, Scale, ScaleQuery } from "./Scales.js";
 import Rhythm from "./Rhythm.js";
 import { Drumkit, Drums } from "./Drums.js";
 import { Arrays, NonEmptyArray } from "../util/Arrays.js";
-import { mod } from "../util/Util.js";
+import { mod, impossible } from "../util/Util.js";
 
 enum MeasureContents {
     DRUMS, CHORDS
@@ -175,7 +175,7 @@ export namespace MusicManager {
         }
     }
 
-    function queueNextMeasures(startingTime: number): void {
+    function queueNextMeasure(startingTime: number): void {
         const beatLength: number = 60 / state.beatsPerMinute;
         if (state.queue.length === 0) {
             fillQueue();
@@ -191,18 +191,21 @@ export namespace MusicManager {
                 case MeasureContents.CHORDS:
                     queueChord(startingTime);
                     break;
+                default: impossible();
                 }
             }
         }
+        const nextMeasureStartTime: number = startingTime + measureLength;
         window.setTimeout(() => {
-            queueNextMeasures(startingTime + measureLength);
-        }, (startingTime + measureLength - context.currentTime - 0.1) * 1000);
+            queueNextMeasure(nextMeasureStartTime); // schedule next measure for after this one
+            // compute next measure 100ms (0.1s) before it needs to start
+        }, (nextMeasureStartTime - context.currentTime - 0.1) * 1000);
     }
 
     export function initialize(): void {
         masterGain.gain.value = 0.25;
         masterGain.connect(context.destination);
-        queueNextMeasures(context.currentTime);
+        queueNextMeasure(context.currentTime);
     }
 
     export function setVolume(volume: number): void {
