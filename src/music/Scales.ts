@@ -30,11 +30,10 @@ export namespace Scales {
     // i.e., the scale 2^7 + 2^6 + 2^5 + 2^0 becomes [0, 5, 6, 7]
     export function getPitchClass(scale: Scale): number[] {
         const r: number[] = [];
-        for (let i = 0; scale !== 0; scale >>>= 1) {
+        for (let i = 0; scale !== 0; scale >>>= 1, i++) {
             if (scale & 1) {
                 r.push(i);
             }
-            i++;
         }
         return r;
     }
