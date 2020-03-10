@@ -1,5 +1,4 @@
 import { mod } from "../util/Util.js";
-
 import { Arrays } from "../util/Arrays.js";
 
 export type Scale = number; // scales are encoded with numbers in Ian Ring's format

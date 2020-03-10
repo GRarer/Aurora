@@ -119,12 +119,12 @@ export namespace MusicManager {
         instOut.connect(masterGain);
     }
 
-
     function octave(root: number, octave: number): number {
         return mod(root, 12) + octave * 12;
     }
 
-    function regenerateState(): void {
+    // Change key, time signature, etc. and fill state.queue with music to schedule.
+    function fillQueue(): void {
         // Allowed time signatures, as n/8
         const timeSignatures: NonEmptyArray<number> = [5, 6, 7, 8, 9, 11, 13];
         state.rhythm.generateNewSubdivision(Random.fromArray(timeSignatures));
@@ -178,12 +178,11 @@ export namespace MusicManager {
     function queueNextMeasures(startingTime: number): void {
         const beatLength: number = 60 / state.beatsPerMinute;
         if (state.queue.length === 0) {
-            regenerateState();
+            fillQueue();
         }
         const measureLength: number = beatLength * state.rhythm.beats;
-        if (state.queue.length > 0) {
-            // this cast is safe since it's only performed if there is anything in the queue
-            const currentContents: MeasureContents[] = state.queue.shift() as MeasureContents[];
+        const currentContents = state.queue.shift();
+        if (currentContents) {
             for (const k of currentContents) {
                 switch (k) {
                 case MeasureContents.DRUMS:
