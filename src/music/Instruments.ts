@@ -40,7 +40,7 @@ export class OscillatorInstrument extends Instrument {
             this.env, volume);
         const end = note.start + note.duration + (this.env.sustain || 0);
         // initialize oscillator(s)
-        const oscs: OscillatorNode[] = freqs.map((freq, i) => {
+        freqs.forEach((freq, i) => {
             const osc = context.createOscillator();
             osc.type = this.type;
             osc.frequency.setValueAtTime(freq, note.start);
@@ -48,11 +48,10 @@ export class OscillatorInstrument extends Instrument {
             osc.start(note.start);
             osc.stop(end);
             osc.connect(gain);
-            return osc;
+            osc.onended = () => {
+                gain.disconnect();
+            };
         });
-        oscs[0].onended = () => {
-            gain.disconnect();
-        };
         return gain;
     }
 
