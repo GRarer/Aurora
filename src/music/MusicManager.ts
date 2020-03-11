@@ -50,7 +50,6 @@ export namespace MusicManager {
     };
 
     export const masterGain: GainNode = context.createGain();
-    export const drumkit: Drumkit = new Drumkit();
 
     const state: MusicState = {
         beatsPerMinute: 220,
@@ -110,7 +109,7 @@ export namespace MusicManager {
     }
 
     function scheduleDrum(start: number, drum: Drums): void {
-        const drumOut: AudioNode = drumkit.scheduleHit(context, start, drum);
+        const drumOut: AudioNode = Drumkit.scheduleHit(context, start, drum);
         drumOut.connect(masterGain);
     }
 
