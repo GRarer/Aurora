@@ -1,9 +1,10 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import { HumanSeedCoreTexture } from "../../ui/Images.js";
 import { stripIndent } from "../../util/Text.js";
 import { Schemas as S } from "@nprindle/augustus";
 
+@TileType
 export default class HumanSeedCore extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -33,4 +34,3 @@ export default class HumanSeedCore extends Tile {
     );
 }
 
-tileTypes[HumanSeedCore.name] = HumanSeedCore;

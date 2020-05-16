@@ -1,8 +1,9 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import { HumanCircuitsTexture } from "../../ui/Images.js";
 import { Schemas as S } from "@nprindle/augustus";
 
+@TileType
 export default class HumanCircuits extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -31,4 +32,3 @@ export default class HumanCircuits extends Tile {
     );
 }
 
-tileTypes[HumanCircuits.name] = HumanCircuits;

@@ -1,4 +1,4 @@
-import Tile, { tileTypes, wastelandVariantSchema } from "../Tile.js";
+import Tile, { TileType, wastelandVariantSchema } from "../Tile.js";
 import TileProject from "../../world/TileProject.js";
 import GridCoordinates from "../GridCoordinates.js";
 import { XenoEngineeringConstructionTexture } from "../../ui/Images.js";
@@ -17,6 +17,7 @@ import { hasTech, tileExists, notQuery } from "../../queries/Queries.js";
 import { Schemas as S } from "@nprindle/augustus";
 import Technology from "../../techtree/Technology.js";
 
+@TileType
 export default class ConstructionVictory extends Tile {
 
     constructor(position: GridCoordinates, private wastelandVariant?: 1 | 2 | 3 | 4 | 5) {
@@ -85,4 +86,3 @@ export default class ConstructionVictory extends Tile {
     );
 }
 
-tileTypes[ConstructionVictory.name] = ConstructionVictory;

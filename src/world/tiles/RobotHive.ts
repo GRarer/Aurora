@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import Species from "../../resources/Species.js";
 import Housing from "../../resources/Housing.js";
@@ -12,6 +12,7 @@ import { hasTech } from "../../queries/Queries.js";
 import { Schemas as S } from "@nprindle/augustus";
 import Technology from "../../techtree/Technology.js";
 
+@TileType
 export default class RobotHive extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -67,4 +68,3 @@ export default class RobotHive extends Tile {
     });
 }
 
-tileTypes[RobotHive.name] = RobotHive;

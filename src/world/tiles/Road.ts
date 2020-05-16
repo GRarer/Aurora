@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import { RoadTextureCross, RoadTextureVertical, RoadTextureHorizontal, RoadTextureTSouth, RoadTextureTNorth,
     RoadTextureTEast, RoadTextureTWest, RoadTextureCornerTopRight, RoadTextureCornerBottomRight,
@@ -7,6 +7,7 @@ import World from "../World.js";
 import { Schemas as S } from "@nprindle/augustus";
 
 
+@TileType
 export default class Road extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -80,4 +81,3 @@ export default class Road extends Tile {
     static readonly schema = S.classOf({ position: GridCoordinates.schema }, ({ position }) => new Road(position));
 }
 
-tileTypes[Road.name] = Road;

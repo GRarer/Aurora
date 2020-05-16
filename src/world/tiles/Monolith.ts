@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import { MonolithTexture } from "../../ui/Images.js";
 import TileProject from "../../world/TileProject.js";
@@ -17,6 +17,7 @@ import { Schemas as S } from "@nprindle/augustus";
 import Technology from "../../techtree/Technology.js";
 import { MonolithCompletionProject } from "../../quests/MonolithCompletionProject.js";
 
+@TileType
 export default class Monolith extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -84,4 +85,3 @@ export default class Monolith extends Tile {
     static readonly schema = S.classOf({ position: GridCoordinates.schema }, ({ position }) => new Monolith(position));
 }
 
-tileTypes[Monolith.name] = Monolith;

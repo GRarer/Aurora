@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import Resource from "../../resources/Resource.js";
 import Conversion from "../../resources/Conversion.js";
@@ -14,6 +14,7 @@ import { Schemas as S } from "@nprindle/augustus";
 import Technology from "../../techtree/Technology.js";
 
 
+@TileType
 export default class XenoLab extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -68,4 +69,3 @@ export default class XenoLab extends Tile {
     });
 }
 
-tileTypes[XenoLab.name] = XenoLab;

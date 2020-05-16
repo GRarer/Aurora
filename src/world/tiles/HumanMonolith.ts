@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import { HumanMonolithTexture } from "../../ui/Images.js";
 import { stripIndent } from "../../util/Text.js";
@@ -14,6 +14,7 @@ import Technology from "../../techtree/Technology.js";
 import TileProject from "../TileProject.js";
 import { MonolithCompletionProject } from "../../quests/MonolithCompletionProject.js";
 
+@TileType
 export default class HumanMonolith extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -62,4 +63,3 @@ export default class HumanMonolith extends Tile {
         S.classOf({ position: GridCoordinates.schema }, ({ position }) => new HumanMonolith(position));
 }
 
-tileTypes[HumanMonolith.name] = HumanMonolith;

@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import Resource from "../../resources/Resource.js";
 import Conversion from "../../resources/Conversion.js";
@@ -6,6 +6,7 @@ import Cost from "../../resources/Cost.js";
 import { RecyclerTexture1, RecyclerTexture2 } from "../../ui/Images.js";
 import { Schemas as S } from "@nprindle/augustus";
 
+@TileType
 export default class Recycler extends Tile {
     private textureVariant: 1 | 2;
 
@@ -64,4 +65,3 @@ export default class Recycler extends Tile {
     );
 }
 
-tileTypes[Recycler.name] = Recycler;

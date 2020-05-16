@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import Resource from "../../resources/Resource.js";
 import Conversion from "../../resources/Conversion.js";
@@ -8,6 +8,7 @@ import { Schemas as S } from "@nprindle/augustus";
 import { stripIndent } from "../../util/Text.js";
 
 
+@TileType
 export default class ZeroPointPlant extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -48,4 +49,3 @@ export default class ZeroPointPlant extends Tile {
     });
 }
 
-tileTypes[ZeroPointPlant.name] = ZeroPointPlant;

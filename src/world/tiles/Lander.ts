@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import TileProject from "../../world/TileProject.js";
 import GridCoordinates from "../GridCoordinates.js";
 import Species from "../../resources/Species.js";
@@ -13,6 +13,7 @@ import Road from "./Road.js";
 import { stripIndent } from "../../util/Text.js";
 import { Schemas as S } from "@nprindle/augustus";
 
+@TileType
 export default class Lander extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -66,4 +67,3 @@ export default class Lander extends Tile {
     static readonly schema = S.classOf({ position: GridCoordinates.schema }, ({ position }) => new Lander(position));
 }
 
-tileTypes[Lander.name] = Lander;

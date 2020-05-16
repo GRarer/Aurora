@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import TileProject from "../../world/TileProject.js";
 import GridCoordinates from "../GridCoordinates.js";
 import Game from "../../Game.js";
@@ -12,6 +12,7 @@ import MiningFacility from "./MiningFacility.js";
 import { Schemas as S } from "@nprindle/augustus";
 import Technology from "../../techtree/Technology.js";
 
+@TileType
 export default class Mountain extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -59,4 +60,3 @@ export default class Mountain extends Tile {
     static readonly schema = S.classOf({ position: GridCoordinates.schema }, ({ position }) => new Mountain(position));
 }
 
-tileTypes[Mountain.name] = Mountain;

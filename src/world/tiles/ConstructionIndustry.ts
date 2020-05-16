@@ -1,4 +1,4 @@
-import Tile, { tileTypes, wastelandVariantSchema } from "../Tile.js";
+import Tile, { TileType, wastelandVariantSchema } from "../Tile.js";
 import TileProject from "../../world/TileProject.js";
 import GridCoordinates from "../GridCoordinates.js";
 import { IndustryConstructionTexture, } from "../../ui/Images.js";
@@ -19,6 +19,7 @@ import { hasTech } from "../../queries/Queries.js";
 import { Schemas as S } from "@nprindle/augustus";
 import Technology from "../../techtree/Technology.js";
 
+@TileType
 export default class ConstructionIndustry extends Tile {
 
     constructor(position: GridCoordinates, private wastelandVariant?: 1 | 2 | 3 | 4 | 5) {
@@ -108,4 +109,3 @@ export default class ConstructionIndustry extends Tile {
     );
 }
 
-tileTypes[ConstructionIndustry.name] = ConstructionIndustry;

@@ -1,4 +1,4 @@
-import Tile, { tileTypes, wastelandVariantSchema } from "../Tile.js";
+import Tile, { TileType, wastelandVariantSchema } from "../Tile.js";
 import TileProject from "../../world/TileProject.js";
 import GridCoordinates from "../GridCoordinates.js";
 import Game from "../../Game.js";
@@ -19,6 +19,7 @@ import { roadRequirement } from "../../queries/DescribedTileQuery.js";
 import { Schemas as S } from "@nprindle/augustus";
 import Technology from "../../techtree/Technology.js";
 
+@TileType
 export default class Wasteland extends Tile {
 
     private textureVariant: 1 | 2 | 3 | 4 | 5;
@@ -124,4 +125,3 @@ export default class Wasteland extends Tile {
     );
 }
 
-tileTypes[Wasteland.name] = Wasteland;

@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import { RuinsTexture1, RuinsTexture2 } from "../../ui/Images.js";
 import { Random } from "../../util/Random.js";
@@ -12,6 +12,7 @@ import { hasTech } from "../../queries/Queries.js";
 import { Schemas as S } from "@nprindle/augustus";
 import Technology from "../../techtree/Technology.js";
 
+@TileType
 export default class Ruins extends Tile {
 
     private textureVariant: 1 | 2 = Random.bool() ? 1 : 2;
@@ -64,4 +65,3 @@ export default class Ruins extends Tile {
     );
 }
 
-tileTypes[Ruins.name] = Ruins;

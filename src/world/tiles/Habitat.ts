@@ -1,4 +1,4 @@
-import Tile, { tileTypes } from "../Tile.js";
+import Tile, { TileType } from "../Tile.js";
 import GridCoordinates from "../GridCoordinates.js";
 import Species from "../../resources/Species.js";
 import Housing from "../../resources/Housing.js";
@@ -6,6 +6,7 @@ import { HabitatTexture } from "../../ui/Images.js";
 import { Schemas as S } from "@nprindle/augustus";
 import { safetyProject } from "../../quests/SafetyProject.js";
 
+@TileType
 export default class Habitat extends Tile {
 
     constructor(position: GridCoordinates) {
@@ -43,4 +44,3 @@ export default class Habitat extends Tile {
     });
 }
 
-tileTypes[Habitat.name] = Habitat;

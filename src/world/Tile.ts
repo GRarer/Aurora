@@ -45,9 +45,15 @@ export type NamedTileType = typeof Tile & {
 
 /**
  * A global map of names of subtypes of Tile to their constructor
- * TODO: do this with decorator metadata instead
  */
-export const tileTypes: Record<string, typeof Tile & { schema: Schema<Tile, any>; }> = {};
+const tileTypes: Record<string, typeof Tile & { schema: Schema<Tile, any>; }> = {};
+
+/**
+ * Decorator for registering Tile subclasses with 'tileTypes'
+ */
+export function TileType(target: typeof Tile & { schema: Schema<Tile, any>; }): void {
+    tileTypes[target.name] = target;
+}
 
 export const typeofTileSchema: Schema<typeof Tile, keyof typeof tileTypes> = S.schema({
     encode: (x: typeof Tile): keyof typeof tileTypes => {
