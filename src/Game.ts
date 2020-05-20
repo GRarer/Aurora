@@ -147,7 +147,7 @@ export default class Game {
         S.recordOf({
             world: World.schema,
             inventory: Inventory.schema,
-            questStage: QuestStage.schema(),
+            questStage: QuestStage.schema,
             endState: S.optional(Ending.schema),
             prevQuestDescription: S.aString,
             questCompletionShown: S.aBoolean,

@@ -16,17 +16,15 @@ export class QuestPath {
     // Since these two classes are mutually recursive, we just use 'any' to
     // avoid the potentially infinite recursive representation types, and use a
     // function instead of a value. The recursion is handled using lazy schemas.
-    static schema(): Schema<QuestPath, any> {
-        return S.classOf({
-            requirement: worldQuerySchema,
-            next: S.unionOf(
-                (x: QuestStage | Ending): x is QuestStage => x instanceof QuestStage,
-                (x: QuestStage | Ending): x is Ending => x instanceof Ending,
-                S.lazy(() => QuestStage.schema()),
-                Ending.schema,
-            ),
-        }, ({ requirement, next }) => new QuestPath(requirement, next));
-    }
+    static schema: Schema<QuestPath, any> = S.classOf({
+        requirement: worldQuerySchema,
+        next: S.unionOf(
+            (x: QuestStage | Ending): x is QuestStage => x instanceof QuestStage,
+            (x: QuestStage | Ending): x is Ending => x instanceof Ending,
+            S.lazy(() => QuestStage.schema),
+            Ending.schema,
+        ),
+    }, ({ requirement, next }) => new QuestPath(requirement, next));
 }
 
 export class QuestStage {
@@ -49,17 +47,15 @@ export class QuestStage {
     // Since these two classes are mutually recursive, we just use 'any' to
     // avoid the potentially infinite recursive representation types, and use a
     // function instead of a value. The recursion is handled using lazy schemas.
-    static schema(): Schema<QuestStage, any> {
-        return S.contra(
-            S.recordOf({
-                description: S.aString,
-                paths: LS.arrayOf(() => QuestPath.schema()),
-                hint: S.optional(S.aString),
-            }), qs => ({
-                description: qs.description,
-                paths: qs.paths,
-                hint: qs.hint,
-            }), ({ description, paths, hint }) => new QuestStage(description, paths, hint),
-        );
-    }
+    static schema: Schema<QuestStage, any> = S.contra(
+        S.recordOf({
+            description: S.aString,
+            paths: LS.arrayOf(() => QuestPath.schema),
+            hint: S.optional(S.aString),
+        }), qs => ({
+            description: qs.description,
+            paths: qs.paths,
+            hint: qs.hint,
+        }), ({ description, paths, hint }) => new QuestStage(description, paths, hint),
+    );
 }
