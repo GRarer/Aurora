@@ -7,7 +7,7 @@ import Rhythm from "./Rhythm.js";
 import { Drumkit, Drums } from "./Drums.js";
 import { Arrays, NonEmptyArray } from "../util/Arrays.js";
 import { Settings } from "../persistence/Settings.js";
-import { clamp, mod, impossible } from "../util/Util.js";
+import { clamp, mod, impossible, sleep } from "../util/Util.js";
 import { unwrap } from "@nprindle/minewt";
 import { makeSamples, SampleNames, SampleData } from "./Samples.js";
 
@@ -224,9 +224,7 @@ export namespace MusicManager {
         }
         const nextMeasureStartTime: number = startingTime + measureLength;
         // compute next measure 100ms (0.1s) before it needs to start
-        await new Promise(resolve => {
-            window.setTimeout(resolve, (nextMeasureStartTime - context.currentTime - 0.1) * 1000);
-        });
+        await sleep((nextMeasureStartTime - context.currentTime - 0.1) * 1000);
         return queueNextMeasure(nextMeasureStartTime); // schedule next measure for after this one
     }
 
