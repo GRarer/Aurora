@@ -79,7 +79,11 @@ export const tileSchema: Schema<Tile, { type: string; value: any; }> = S.schema(
         return con.schema.decode(x.value);
     }, validate: (data: unknown): data is { type: string; value: any; } => {
         if (S.recordOf({ type: S.aString, value: S.anAny }).validate(data)) {
-            const schema = tileTypes[data.type].schema;
+            const tileType = tileTypes[data.type];
+            if (tileType === undefined) {
+                return false;
+            }
+            const schema = tileType.schema;
             return schema.validate(data.value);
         } else {
             return false;
