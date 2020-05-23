@@ -5,7 +5,6 @@ import SettingsScreen from "./SettingsScreen.js";
 import Game from "../../Game.js";
 import WorldScreen from "../worldScreen/WorldScreen.js";
 import { GameSave } from "../../persistence/GameSave.js";
-import Conversion from "../../resources/Conversion.js";
 import { Page } from "../Page.js";
 
 export default class PauseMenu implements Page {
@@ -23,10 +22,7 @@ export default class PauseMenu implements Page {
                     GameWindow.show(new SettingsScreen(this));
                 }),
                 UI.makeButton("save_and_quit", () => {
-                    GameSave.saveProgress({
-                        game: this.game,
-                        nextConversionPriority: Conversion.unsafeGetNextPriority()
-                    });
+                    GameSave.saveProgress(this.game);
                     GameWindow.show(new MainMenu());
                 }),
             ], ["main-menu-options"]),

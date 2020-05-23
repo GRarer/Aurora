@@ -7,7 +7,6 @@ import WorldScreen from "../worldScreen/WorldScreen";
 import Game from "../../Game";
 import { MusicManager } from "../../music/MusicManager";
 import { GameSave } from "../../persistence/GameSave";
-import Conversion from "../../resources/Conversion.js";
 import MessageScreen from "./MessageScreen.js";
 import AchievementsScreen from "./AchievementsScreen.js";
 import { ConfirmScreen } from "./ConfirmScreen.js";
@@ -43,11 +42,10 @@ export default class MainMenu implements Page {
         const saved: boolean = GameSave.saveExists();
 
         const resumeButton = UI.makeButton("resume_game", () => {
-            const data = GameSave.loadProgress();
-            if (data) {
-                Conversion.unsafeSetNextPriority(data.nextConversionPriority);
-                Cheats.enableCheats(data.game);
-                GameWindow.show(new WorldScreen(data.game));
+            const game = GameSave.loadProgress();
+            if (game !== undefined) {
+                Cheats.enableCheats(game);
+                GameWindow.show(new WorldScreen(game));
             } else {
                 GameWindow.show(new MessageScreen(
                     "Deserialization Error",

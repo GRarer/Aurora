@@ -78,7 +78,7 @@ export default class Game {
     getResourceConversions(): Conversion[] {
         const allConversions = Arrays.flatten(this.world.getTiles().map(tile => tile.resourceConversions));
         // sort by priority number
-        allConversions.sort((a, b) => a.priority - b.priority);
+        allConversions.sort((a, b) => (a.priority ?? Infinity) - (b.priority ?? Infinity));
         return allConversions;
     }
 

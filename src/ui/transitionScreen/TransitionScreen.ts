@@ -5,7 +5,6 @@ import { indentWithNBS } from "../../util/Text.js";
 import WorldScreen from "../worldScreen/WorldScreen.js";
 import Game from "../../Game.js";
 import { GameSave } from "../../persistence/GameSave.js";
-import Conversion from "../../resources/Conversion.js";
 import { Page } from "../Page.js";
 
 // "loading" screen shown between turns
@@ -48,7 +47,7 @@ export default class TransitionScreen implements Page {
     startLoading(): void {
         const startTime = Date.now();
         this.game.completeTurn();
-        GameSave.saveProgress({ game: this.game, nextConversionPriority: Conversion.unsafeGetNextPriority() });
+        GameSave.saveProgress( this.game);
         const elapsedTime = Date.now() - startTime;
 
         setTimeout(() => {

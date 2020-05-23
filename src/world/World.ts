@@ -19,7 +19,13 @@ export default class World {
         public width: number,
         public height: number,
         // world grid is indexed grid[row][column]
-        public grid: Tile[][],
+        private grid: Tile[][],
+
+        /* conversions have a 'priority' number that determines the order in which they are applied
+         * conversions on newly-created tiles start out with undefined priority, and will be assigned
+         * the next sequential number when they are added to the world
+         */
+        private nextConversionPriority: number = 0
     ) {}
 
     static generateWorld(): World {
@@ -67,6 +73,12 @@ export default class World {
 
     // place a tile into the grid in the position given by the tile's coordinates
     placeTile(tile: Tile): void {
+        // assign sequential priorities to new resource conversions
+        for (const conversion of tile.resourceConversions.filter(conversion => conversion.priority === undefined)) {
+            conversion.priority = this.nextConversionPriority;
+            this.nextConversionPriority++;
+        }
+
         this.grid[tile.position.y][tile.position.x] = tile;
     }
 
@@ -118,9 +130,15 @@ export default class World {
         return capacity;
     }
 
-    static readonly schema = S.classOf({
-        width: S.aNumber,
-        height: S.aNumber,
-        grid: S.arrayOf(S.arrayOf(tileSchema)),
-    }, ({ width, height, grid }) => new World(width, height, grid));
+    static readonly schema = S.contra(
+        S.recordOf({
+            width: S.aNumber,
+            height: S.aNumber,
+            grid: S.arrayOf(S.arrayOf(tileSchema)),
+            nextConversionPriority: S.aNumber,
+        }),
+        (w: World) =>
+            ({ width: w.width, height: w.height, grid: w.grid, nextConversionPriority: w.nextConversionPriority }),
+        ({ width, height, grid, nextConversionPriority }) => new World(width, height, grid, nextConversionPriority),
+    );
 }
