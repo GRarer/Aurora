@@ -11,22 +11,34 @@ import { Schemas as S } from "@nprindle/augustus";
 
 export default class World {
 
+    public width: number;
+    public height: number;
+
     // coordinates of the view area's top-left tile, used by MapUI
     // this is stored as part of the world so that the current position persists between screens
     viewPosition: GridCoordinates = new GridCoordinates(0, 0);
 
+    /* conversions have a 'priority' number that determines the order in which they are applied
+     * conversions on newly-created tiles start out with undefined priority, and will be assigned
+     * the next sequential number when they are added to the world
+     */
+
     private constructor(
-        public width: number,
-        public height: number,
         // world grid is indexed grid[row][column]
         private grid: Tile[][],
-
-        /* conversions have a 'priority' number that determines the order in which they are applied
-         * conversions on newly-created tiles start out with undefined priority, and will be assigned
-         * the next sequential number when they are added to the world
-         */
         private nextConversionPriority: number = 0
-    ) {}
+    ) {
+        this.height = grid.length;
+        this.width = grid[0].length;
+
+        // assign priority numbers to any conversions within the initial grid that have not already been assigned
+        for (const tile of Arrays.flatten(grid)) {
+            for (const conversion of tile.resourceConversions.filter(conversion => conversion.priority === undefined)) {
+                conversion.priority = this.nextConversionPriority;
+                this.nextConversionPriority++;
+            }
+        }
+    }
 
     static generateWorld(): World {
         const width = WorldGenerationParameters.width;
@@ -41,7 +53,7 @@ export default class World {
             }
         }
 
-        const world = new World(width, height, grid);
+        const world = new World(grid);
 
         // place random mountains
         const mountainNumber = Random.intBetween(...WorldGenerationParameters.mountainRange);
@@ -132,13 +144,16 @@ export default class World {
 
     static readonly schema = S.contra(
         S.recordOf({
-            width: S.aNumber,
-            height: S.aNumber,
-            grid: S.arrayOf(S.arrayOf(tileSchema)),
+            grid: S.constrain(
+                S.arrayOf(S.arrayOf(tileSchema)),
+                (Arrays.isRectangle) // jagged arrays are not valid world grids
+            ),
             nextConversionPriority: S.aNumber,
         }),
-        (w: World) =>
-            ({ width: w.width, height: w.height, grid: w.grid, nextConversionPriority: w.nextConversionPriority }),
-        ({ width, height, grid, nextConversionPriority }) => new World(width, height, grid, nextConversionPriority),
+        (w: World) => ({ grid: w.grid, nextConversionPriority: w.nextConversionPriority }),
+        ({ grid, nextConversionPriority }) => {
+            const w = new World(grid, nextConversionPriority);
+            return w;
+        },
     );
 }
