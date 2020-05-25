@@ -25,21 +25,18 @@ export default class Conversion {
         return new Conversion(inputs, outputs, requiredWorkers, undefined);
     }
 
-    isFree(): boolean {
-        return this.inputs.length === 0 && this.requiredWorkers === 0;
-    }
-
     toString(): string {
-        const outputDescription = this.outputs.map(output => output.toString()).join(", ");
-        if (this.isFree()) {
+        const outputDescription: string = this.outputs.map(output => output.toString()).join(", ");
+
+        const inputStrings: string[] = this.inputs.map(cost => cost.toString());
+        if (this.requiredWorkers !== 0) {
+            inputStrings.push(`${this.requiredWorkers} workers`);
+        }
+
+        if (inputStrings.length === 0) {
             return `Produce ${outputDescription}`;
         } else {
-            const inputStrings = this.inputs.map(cost => cost.toString());
-            if (this.requiredWorkers !== 0) {
-                inputStrings.push(`${this.requiredWorkers} workers`);
-            }
-            const inputDescription = inputStrings.join(", ");
-            return `Produce ${outputDescription} using ${inputDescription}`;
+            return `Produce ${outputDescription} using ${inputStrings.join(", ")}`;
         }
     }
 
