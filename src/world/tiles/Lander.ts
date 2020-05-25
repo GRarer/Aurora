@@ -5,7 +5,7 @@ import Species from "../../resources/Species.js";
 import Game from "../../Game.js";
 import Habitat from "./Habitat.js";
 import MiningFacility from "./MiningFacility.js";
-import SolarPanels from "./SolarArray.js";
+import SolarPanels from "./SolarPanels.js";
 import { LanderTexture } from "../../ui/Images.js";
 import Resource from "../../resources/Resource.js";
 import Greenhouse from "./Greenhouse.js";

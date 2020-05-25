@@ -9,7 +9,7 @@ import AlienSeedCore from "../world/tiles/AlienSeedCore.js";
 import HumanSeedCore from "../world/tiles/HumanSeedCore.js";
 import HumanMonolith from "../world/tiles/HumanMonolith.js";
 import Resource from "../resources/Resource.js";
-import SolarPanels from "../world/tiles/SolarArray.js";
+import SolarPanels from "../world/tiles/SolarPanels.js";
 import Road from "../world/tiles/Road.js";
 import { WorldPredicate } from "../queries/Queries.js";
 import Technology from "../techtree/Technology.js";

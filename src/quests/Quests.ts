@@ -1,7 +1,7 @@
 import { QuestStage, QuestPath } from "./QuestStage.js";
 import Resource from "../resources/Resource.js";
 import Habitat from "../world/tiles/Habitat.js";
-import SolarPanels from "../world/tiles/SolarArray.js";
+import SolarPanels from "../world/tiles/SolarPanels.js";
 import Lander from "../world/tiles/Lander.js";
 import GridCoordinates from "../world/GridCoordinates.js";
 import Ending from "./Ending.js";

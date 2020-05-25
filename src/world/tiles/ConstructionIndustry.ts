@@ -6,7 +6,7 @@ import Game from "../../Game.js";
 import Resource from "../../resources/Resource.js";
 import Cost from "../../resources/Cost.js";
 import MiningFacility from "./MiningFacility.js";
-import SolarPanels from "./SolarArray.js";
+import SolarPanels from "./SolarPanels.js";
 import NuclearPlant from "./NuclearPlant.js";
 import Wasteland from "./Wasteland.js";
 import { constructionProject } from "../../world/TileProject.js";
