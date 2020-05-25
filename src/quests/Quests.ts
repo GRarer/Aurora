@@ -3,7 +3,6 @@ import Resource from "../resources/Resource.js";
 import Habitat from "../world/tiles/Habitat.js";
 import SolarPanels from "../world/tiles/SolarPanels.js";
 import Lander from "../world/tiles/Lander.js";
-import GridCoordinates from "../world/GridCoordinates.js";
 import Ending from "./Ending.js";
 import EngineeringLab from "../world/tiles/EngineeringLab.js";
 import Wasteland from "../world/tiles/Wasteland.js";
@@ -126,8 +125,6 @@ export const QuestXenoLab: QuestStage = new QuestStage(
     `Use the "WASD" or arrow keys to move around the map`,
 );
 
-const habitatPopulationCapacity = new Habitat(new GridCoordinates(0, 0)).populationCapacity.capacity;
-
 export const TutorialQuestPopulation: QuestStage = new QuestStage(
     "Grow total worker population to 250",
     [
@@ -136,7 +133,7 @@ export const TutorialQuestPopulation: QuestStage = new QuestStage(
             QuestXenoLab,
         )
     ],
-    `A ${Habitat.tileName} has capacity for ${habitatPopulationCapacity} colonists`,
+    `A ${Habitat.tileName} has capacity for ${Habitat.populationCapacity.capacity} colonists`,
 );
 
 export const TutorialQuestScience: QuestStage = new QuestStage(

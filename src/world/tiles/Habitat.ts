@@ -17,7 +17,9 @@ export default class Habitat extends Tile {
         return HabitatTexture;
     }
 
-    populationCapacity: Housing = new Housing(Species.Human, 200);
+    // this needs to be statically accessible because it is used by description text for a quest stage
+    static readonly populationCapacity: Housing = new Housing(Species.Human, 200);
+    populationCapacity: Housing = Habitat.populationCapacity;
 
     possibleProjects = [
         safetyProject
