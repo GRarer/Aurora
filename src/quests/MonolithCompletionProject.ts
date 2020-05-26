@@ -4,7 +4,6 @@ import Cost from "../resources/Cost";
 import { GameWindow } from "../ui/GameWindow";
 import DescribedTileQuery from "../queries/DescribedTileQuery";
 import { TileQuery } from "../queries/Queries.js";
-import { sleep } from "../util/Util";
 import TileProject from "../world/TileProject";
 import AlienSeedCore from "../world/tiles/AlienSeedCore";
 import HumanSeedCore from "../world/tiles/HumanSeedCore";
@@ -47,16 +46,12 @@ export class MonolithCompletionProject extends TileProject {
              * this happens asynchronously with timeouts between each step, so the player can still move around the map
              * and click on tiles while this is happening.
              */
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.endSequence(game, position);
         }
     }
 
     // the  end of the game shows the "circuits" tiles spreading out from the monolith and consuming the world
-    private async endSequence(game: Game, center: GridCoordinates): Promise<void> {
-
-
-
+    private endSequence(game: Game, center: GridCoordinates): void {
         const world = game.world;
 
         game.updateQuestState();
@@ -67,27 +62,31 @@ export class MonolithCompletionProject extends TileProject {
         let radius = 1;
         let tilesInRadius = [];
 
-        while (tilesInRadius.length < (world.width * world.height)) {
-            tilesInRadius = world.getTilesInCircle(center, radius);
-            for (const target of tilesInRadius) {
-                if (!(target instanceof this.activeMonolithTile) && !(target instanceof this.circuitsTile)) {
-                    world.placeTile(new this.circuitsTile(target.position));
+        // It's much easier to write something like this with async/await, but you
+        // can't spawn a Promise<void>. Instead, we can write it using
+        // 'setTimeout' with explicit continuation passing style.
+        const go = (): void => {
+            if (tilesInRadius.length < (world.width * world.height)) {
+                tilesInRadius = world.getTilesInCircle(center, radius);
+                for (const target of tilesInRadius) {
+                    if (!(target instanceof this.activeMonolithTile) && !(target instanceof this.circuitsTile)) {
+                        world.placeTile(new this.circuitsTile(target.position));
+                    }
                 }
+                game.updateQuestState();
+                game.inventory.applyPopulationCaps();
+                GameWindow.refreshCurrentPage();
+                radius = radius * 1.01 + 0.05;
+                setTimeout(go, 100);
+            } else {
+                // once the entire world is consumed, all resources should disappear
+                for (const resource of game.inventory.getResourceList()) {
+                    game.inventory.removeResource(resource, game.inventory.getResourceQuantity(resource));
+                }
+                GameWindow.refreshCurrentPage();
             }
-
-            game.updateQuestState();
-            game.inventory.applyPopulationCaps();
-            GameWindow.refreshCurrentPage();
-
-            await sleep(100);
-            radius = radius * 1.01 + 0.05;
-        }
-
-        // once the entire world is consumed, all resources should disappear
-        for (const resource of game.inventory.getResourceList()) {
-
-            game.inventory.removeResource(resource, game.inventory.getResourceQuantity(resource));
-        }
-        GameWindow.refreshCurrentPage();
+        };
+        go();
     }
 }
+
