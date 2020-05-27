@@ -3,19 +3,37 @@
 Aurora is a game about space colonization, artificial intelligence, and
 eschatology.
 
-This project is led by Grace Rarer as part of Georgia Tech's VGDev club.
+You can play it at <https://grarer.github.io/Aurora/>
 
-You can play the most recent build in your browser at <https://grarer.github.io/Aurora/>
+This project was led by Grace Rarer as part of Georgia Tech's VGDev club.
 
 ## How to build and run locally
 
-- Node.js is required to build and run the game locally. If you don't already have node.js installed, get it at <https://nodejs.org>
-- After forking and cloning the repository, navigate to the `Aurora` directory with your preferred terminal and enter `npm install`. This tells node.js to install all of the developer dependencies, including the typescript compiler and the live server that we use for local testing. You only have to do this once.
-- To compile the game, enter `npm run build`
-- To test the game locally, you need to start a local server and then navigate your web browser to `http://localhost:<port#>/index.html`. Enter `npm run start` in your terminal to start live-server, which will default to `http://localhost:8080` but will use a different port if 8080 is unavailable. After starting the live server, you do not need to restart it after each build; it will reload automatically.
+- Anyone can play Aurora on the web, but Node.js is required for developers to build and run a local copy of the game.
+- After forking and cloning the repository, navigate to the `Aurora` directory and run `npm install` to install the
+developer dependencies. We have included some helpful node scripts:
+  - `npm run build` to compile the game
+  - `npm run lint` to run code style checking
+  - `npm run start` to start a local server. You can then navigate your web browser to
+`http://localhost:<port#>/index.html` to test your local copy (the default port will usually be 8080). After starting
+the live server, you do not need to restart it after each build; it will reload automatically.
 
-# License and Credits
+## Credits
 
+- Game design, programming, and art assets by Grace Rarer
+- Programming, DevOps, and serialization framework by Prindle
+- Procedural music generation by May Lawver
+- Environment art by Seong Ryoo
+- Additional programming by Mitchell Philipp, Brad Baker, and Will Cooper
+
+## Attributions
+
+- To save and load the game, we use [Augustus](https://www.npmjs.com/package/@nprindle/augustus) (MIT License)
 - For emoji rendering, we use [Twemoji](https://github.com/twitter/twemoji) by
-  Twitter (CC-BY 4.0 license).
-- This project is licensed under the MIT license.
+  Twitter (MIT license for code, CC-BY 4.0 license for emoji graphics)
+- The game's UI uses IBM Plex Mono (Open Font License)
+- Menu background image via NASA (public domain)
+
+## License
+
+- This project is released under the MIT license.
