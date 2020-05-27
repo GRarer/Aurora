@@ -23,24 +23,24 @@
   },
   "homepage": "https://github.com/GRarer/Aurora#readme",
   "dependencies": {
-    "@types/sortablejs": "^1.10.2",
-    "@types/twemoji": "^12.1.0",
+    "@types/sortablejs": "^1.10.4",
+    "@types/twemoji": "^12.1.1",
     "live-server": "^1.2.1",
     "sortablejs": "^1.10.2",
-    "twemoji": "^12.1.5",
+    "twemoji": "^12.1.6",
     "twemoji-parser": "^12.1.3"
   },
   "devDependencies": {
     "@nprindle/augustus": "^1.0.3",
-    "@nprindle/minewt": "^1.0.0",
-    "@typescript-eslint/eslint-plugin": "^2.19.0",
-    "@typescript-eslint/parser": "^2.19.0",
+    "@nprindle/minewt": "^1.0.2",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
     "clean-webpack-plugin": "^3.0.0",
     "eslint": "^6.8.0",
     "shx": "^0.3.2",
     "source-map-loader": "^0.2.4",
-    "typescript": "^3.8.3",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "typescript": "^3.9.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   }
 }
