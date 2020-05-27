@@ -31,7 +31,6 @@ export default class Ruins extends Tile {
         )
     ];
 
-
     static readonly tileName: string = "Alien Ruins";
     static readonly tileDescription: string = "Abandoned structure built by a long-dead alien civilization";
     getTileName(): string {

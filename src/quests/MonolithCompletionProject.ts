@@ -11,7 +11,6 @@ import HumanCircuits from "../world/tiles/HumanCircuits";
 import AlienCircuits from "../world/tiles/AlienCircuits";
 import WorldScreen from "../ui/worldScreen/WorldScreen";
 
-
 // special TileProject used to win the game
 export class MonolithCompletionProject extends TileProject {
     constructor(

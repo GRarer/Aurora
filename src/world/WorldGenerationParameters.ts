@@ -30,7 +30,6 @@ export namespace WorldGenerationParameters {
             new Wasteland(new GridCoordinates(1, 4)),
             new Wasteland(new GridCoordinates(2, 4)),
 
-
             new Monolith(new GridCoordinates(13, 15)),
         ];
     }

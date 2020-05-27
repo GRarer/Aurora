@@ -65,8 +65,6 @@ export default class Game {
             }
         }
 
-
-
         Achievements.updateAchievements(this);
     }
 

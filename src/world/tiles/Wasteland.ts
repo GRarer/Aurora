@@ -24,7 +24,6 @@ export default class Wasteland extends Tile {
 
     private textureVariant: 1 | 2 | 3 | 4 | 5;
 
-
     constructor(position: GridCoordinates, textureVariant?: 1 | 2 | 3 | 4 | 5) {
         super(position);
         if (textureVariant) {

@@ -101,7 +101,6 @@ export default class ProductionScreen implements Page {
             }
         }
 
-
         UI.fillHTML(this.html, [
             UI.makeHeader("Resource Production Management"),
             UI.makeHeader("Inventory at start of production cycle:", 2, ["production-screen-label"]),

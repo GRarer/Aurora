@@ -13,7 +13,6 @@ import { hasTech, notQuery } from "../../queries/Queries.js";
 import { Schemas as S } from "@nprindle/augustus";
 import Technology from "../../techtree/Technology.js";
 
-
 @TileType
 export default class XenoLab extends Tile {
 

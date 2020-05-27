@@ -249,6 +249,4 @@ export default class Technology {
     static readonly values = Objects.multitonValues(Technology);
 
     static readonly schema = S.mapping(Technology.entries);
-
-
 }

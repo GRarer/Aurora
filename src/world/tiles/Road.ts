@@ -6,7 +6,6 @@ import { RoadTextureCross, RoadTextureVertical, RoadTextureHorizontal, RoadTextu
 import World from "../World.js";
 import { Schemas as S } from "@nprindle/augustus";
 
-
 @TileType
 export default class Road extends Tile {
 
@@ -31,7 +30,6 @@ export default class Road extends Tile {
         const below = world.getTileAtCoordinates(new GridCoordinates(x, y + 1)) instanceof Road;
         const right = world.getTileAtCoordinates(new GridCoordinates(x + 1, y)) instanceof Road;
         const left = world.getTileAtCoordinates(new GridCoordinates(x - 1, y)) instanceof Road;
-
 
         // 4 neighbors
         if (left && right && above && below) {

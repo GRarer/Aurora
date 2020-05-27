@@ -77,5 +77,3 @@ export namespace Cheats {
         theWindow.Species = Species;
     }
 }
-
-

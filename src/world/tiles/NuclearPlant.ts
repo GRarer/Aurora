@@ -6,7 +6,6 @@ import Cost from "../../resources/Cost.js";
 import { NuclearPlantTexture } from "../../ui/Images.js";
 import { Schemas as S } from "@nprindle/augustus";
 
-
 @TileType
 export default class NuclearPlant extends Tile {
 

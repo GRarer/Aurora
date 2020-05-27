@@ -3,7 +3,6 @@ import { GameWindow } from "../GameWindow.js";
 import MainMenu from "./MainMenu.js";
 import { Page } from "../Page.js";
 
-
 class CreditsEntry {
     constructor(
         readonly header: string,
