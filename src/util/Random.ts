@@ -48,12 +48,13 @@ export namespace Random {
      * Modern Fisher-Yates shuffle of an array
      */
     export function shuffle<T>(arr: T[]): T[] {
-        for (let i = arr.length - 1; i > 0; i--) {
+        const newArr = [...arr];
+        for (let i = newArr.length - 1; i > 0; i--) {
             const j = Random.intBetween(0, i + 1);
-            const temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
+            const temp = newArr[i];
+            newArr[i] = newArr[j];
+            newArr[j] = temp;
         }
-        return arr;
+        return newArr;
     }
 }
